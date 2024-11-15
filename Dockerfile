@@ -26,6 +26,9 @@ COPY --from=mamba_scif_install $MAMBA_ROOT_PREFIX $MAMBA_ROOT_PREFIX
 
 RUN mkdir -p /run/secrets
 
+RUN ls /run/secrets
+RUN cat /run/secrets/gh_token
+
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     curl https://$(cat /run/secrets/gh_token)@raw.githubusercontent.com/NSSAC/SciducTainer/refs/heads/main/sciduct.scif > /tmp/sciduct.scif &&\
     scif install /tmp/sciduct.scif
