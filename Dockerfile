@@ -1,4 +1,4 @@
-FROM ghcr.io/nssac/mambascif as mamba_scif_install
+FROM ghcr.io/nssac/mambascif AS mamba_scif_install
 FROM ghcr.io/iqbal-lab-org/minos
 
 ARG VERSION
