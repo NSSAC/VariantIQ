@@ -1,15 +1,81 @@
 { "image_type": "apptainer+scif",
   "apps": [
     {
-      "name": "Application 001",
-      "app": "app001_sciduct",
+      "name": "Minos",
+      "app": "minos_sciduct",
       "binds": {
         "input": "/input",
         "job": "/job",
         "output": "/scif/data",
-	"container_cache": "/cache"
+	      "container_cache": "/cache"
       },
-      "description": "A test application for use with the Scuduct Job Service.",
+      "description": "Run Minos...",
+      "input_files": [
+      ],
+      "input_schema": {
+      },
+      "output_files": {
+        "associateJobMeta": true,
+        "isContainer": true,
+        "type": "folder",
+        "contents": [
+          {
+            "match": "${MATCH}/app001_sciduct/*.txt",
+            "type": "txt",
+            "isContainer": false
+          }
+	    ]
+      },
+      "output_schema": {
+      },
+      "resource_requirements": {
+        "cores": 1,
+        "timelimit": 60
+      }
+    },
+    {
+      "name": "Varifier",
+      "app": "varifier_sciduct",
+      "binds": {
+        "input": "/input",
+        "job": "/job",
+        "output": "/scif/data",
+	      "container_cache": "/cache"
+      },
+      "description": "Run Varifier...",
+      "input_files": [
+      ],
+      "input_schema": {
+      },
+      "output_files": {
+        "associateJobMeta": true,
+        "isContainer": true,
+        "type": "folder",
+        "contents": [
+          {
+            "match": "${MATCH}/app001_sciduct/*.txt",
+            "type": "txt",
+            "isContainer": false
+          }
+	    ]
+      },
+      "output_schema": {
+      },
+      "resource_requirements": {
+        "cores": 1,
+        "timelimit": 60
+      }
+    },
+    {
+      "name": "Simutator",
+      "app": "simutator_sciduct",
+      "binds": {
+        "input": "/input",
+        "job": "/job",
+        "output": "/scif/data",
+	      "container_cache": "/cache"
+      },
+      "description": "Run Simutator...",
       "input_files": [
       ],
       "input_schema": {
@@ -35,9 +101,9 @@
     }
   ],
   "authors": [
-    "No One <do-not-reply@virginia.edu>"
+    "Dustin Machi <dm8qs@virginia.edu>"
   ],
-  "description": "App 001",
+  "description": "VariantIq",
   "license": "Commercial",
-  "version": "0.1.0"
+  "version": "0.0.0"
 }
