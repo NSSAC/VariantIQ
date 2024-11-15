@@ -1,0 +1,8 @@
+%appinstall simutator
+cd /bioinf-tools
+git clone https://github.com/iqbal-lab-org/simutator
+cd simutator
+pip install .
+
+%apprun simutator
+simutator $@

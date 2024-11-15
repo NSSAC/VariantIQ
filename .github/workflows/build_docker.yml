@@ -27,7 +27,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            ghcr.io/nssac/sciductainer
+            ghcr.io/nssac/VariantIQ
           tags: |
             type=ref,event=branch
             type=ref,event=pr

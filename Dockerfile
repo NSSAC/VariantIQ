@@ -36,6 +36,9 @@ RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     scif install /docker_context/varifier.scif
 
+RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
+    scif install /docker_context/simutator.scif    
+
 RUN rm -rf /run/secrets || true
 
 ENTRYPOINT ["scif"]
