@@ -1,0 +1,23 @@
+name: VariantIQ-Minos
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.6.9
+  - pip
+  - cluster_vcf_records==0.13.2
+  - bioconda::minimap2==2.17 
+  - bioconda::mummer4==4.0.0rc1
+  - conda-forge::biopython==1.77
+  - bioconda::mappy==2.17
+  - conda-forge::pandas==1.1.0
+  - bioconda::pyfastaq==3.17.0
+  - bioconda::pymummer==0.11.0
+  - bioconda::bcftools==1.10.2
+  - bioconda::pysam==0.16
+  - conda-forge::seaborn==0.10.1
+   
+
+
+
+

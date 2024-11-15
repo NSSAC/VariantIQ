@@ -1,0 +1,12 @@
+%appinstall varifier
+cp /docker_context/varifier_environment.yml .
+micromamba create -n varifier
+micromamba install --yes --name varifier --file varifier_environment.yml
+
+cd /bioinf-tools
+git clone https://github.com/iqbal-lab-org/varifier
+cd varifier
+micromamba run -n varifier pip install --no-deps --ignore-installed .
+
+%apprun varifier
+micromamba run -n varifier varifier $@
