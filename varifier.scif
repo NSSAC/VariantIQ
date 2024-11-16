@@ -7,7 +7,7 @@
 cp /docker_context/varifier_environment.yml .
 # create and provision the environment, utilizing
 # the environment name specified in the file ("varifier").
-micromamba env create --yes --file environment.yml
+micromamba env create --yes --file varifier_environment.yml
 
 cd /bioinf-tools
 git clone https://github.com/iqbal-lab-org/varifier
