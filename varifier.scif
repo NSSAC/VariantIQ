@@ -9,16 +9,9 @@ cp /docker_context/varifier_environment.yml .
 # the environment name specified in the file ("varifier").
 micromamba env create --yes --file varifier_environment.yml
 
-cd /bioinf-tools
-git clone https://github.com/iqbal-lab-org/varifier
-cd varifier
-# Run the pip install command in the "varifier"-named environment
-# (created above), to install the varifier package repo in it.
-micromamba run --name varifier pip install --no-deps --ignore-installed .
-
 %apprun varifier
 #we're running varifier within the  varifier environment here...
-CMD="micromamba run -n varifier varifier $@"
+CMD="varifier $@"
 echo "Running . . . $CMD"
 $CMD
 
