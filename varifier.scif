@@ -1,10 +1,26 @@
 %appinstall varifier
+# copy the env file into the container, to have it
+# available in case anyone wants to use it to
+# test the varifier app, without the container
+# The current directory for this %appinstall will
+# be /scif/apps/varifier.
 cp /docker_context/varifier_environment.yml .
-micromamba install --yes --name base --file varifier_environment.yml
+# create and provision the environment, utilizing
+# the environment name specified in the file ("varifier").
+micromamba env create --yes --file varifier_environment.yml
+
+cd /bioinf-tools
+git clone https://github.com/iqbal-lab-org/varifier
+cd varifier
+# Run the pip install command in the "varifier"-named environment
+# (created above), to install the varifier package repo in it.
+micromamba run --name varifier pip install --no-deps --ignore-installed .
 
 %apprun varifier
 #we're running varifier within the  varifier environment here...
-varifier $@
+CMD="micromamba run -n varifier varifier $@"
+echo "Running . . . $CMD"
+$CMD
 
 %apprun varfier_sciduct
 mkdir -p $SCIF_APPDATA

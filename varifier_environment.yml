@@ -1,3 +1,4 @@
+name: varifier
 channels:
   - conda-forge
   - bioconda
