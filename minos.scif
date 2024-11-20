@@ -1,3 +1,7 @@
+%appenv minos
+#minos needs the vt and tools from bioinf-tools over the ones in /opt/conda/bin/
+PATH=/bioinf-tools/:$PATH
+
 %apprun minos
 echo "Running 'minos $@'"
 minos $@
