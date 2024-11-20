@@ -1,0 +1,24 @@
+%appinstall vcfdist
+# copy the env file into the container, to have it
+# available in case anyone wants to use it to
+# test the varifier app, without the container
+# The current directory for this %appinstall will
+# be /scif/apps/varifier.
+
+cd /bioinf-tools
+git clone https://github.com/timd1/vcfdist
+cd vcfdist/src
+make
+make install
+
+%apprun vcfdist
+#we're running varifier within the  varifier environment here...
+CMD="vcfdist $@"
+echo "Running . . . $CMD"
+$CMD
+
+%apprun vcfdist_sciduct
+mkdir -p $SCIF_APPDATA
+#extract params from /job/job.json
+#NAME="$(jq -r .input.name /job/job.json)"
+#scif run varifier -- ....params...

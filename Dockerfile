@@ -33,7 +33,6 @@ RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     curl https://$(cat /run/secrets/gh_token)@raw.githubusercontent.com/NSSAC/SciducTainer/refs/heads/main/sciduct.scif > /tmp/sciduct.scif && \
     cat /tmp/sciduct.scif
 
-RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context scif --help
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
    scif install /tmp/sciduct.scif
 
@@ -45,6 +44,9 @@ RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
 
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     scif install /docker_context/simutator.scif    
+
+RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
+    scif install /docker_context/vcfdist.scif       
 
 RUN rm -rf /run/secrets || true
 
