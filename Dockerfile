@@ -20,7 +20,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 ENV ENV_NAME="base"
 ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
-ENV PATH="${PATH}:${MAMBA_ROOT_PREFIX}/bin"
+ENV PATH="${MAMBA_ROOT_PREFIX}/bin:${PATH}"
 COPY --from=mamba_scif_install $MAMBA_EXE $MAMBA_EXE
 COPY --from=mamba_scif_install $MAMBA_ROOT_PREFIX $MAMBA_ROOT_PREFIX
 
@@ -50,6 +50,9 @@ RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
 
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     scif install /docker_context/snippy.scif   
+
+RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
+    scif install /docker_context/freebayes.scif 
 
 RUN rm -rf /run/secrets || true
 
