@@ -3,6 +3,7 @@ cd /bioinf-tools
 git clone https://github.com/iqbal-lab-org/simutator
 cd simutator
 pip install .
+rm -rf .git
 
 %apprun simutator
 simutator $@

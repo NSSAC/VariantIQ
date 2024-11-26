@@ -20,6 +20,8 @@ rm -rf .git
 
 cd /
 git clone --recursive https://github.com/iqbal-lab-org/clockwork.git
+rm -rf /clockwork/.git
+
 cd /clockwork/python
 micromamba run --name base python setup.py install
 
