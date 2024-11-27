@@ -1,17 +1,6 @@
-%appinstall varifier
-# copy the env file into the container, to have it
-# available in case anyone wants to use it to
-# test the varifier app, without the container
-# The current directory for this %appinstall will
-# be /scif/apps/varifier.
-cp /docker_context/varifier_environment.yml .
-# create and provision the environment, utilizing
-# the environment name specified in the file ("varifier").
-micromamba install --yes --name base --file varifier_environment.yml
-
 %apprun varifier
 #we're running varifier within the  varifier environment here...
-CMD="varifier $@"
+CMD="micromamba run --name base varifier $@"
 echo "Running . . . $CMD"
 $CMD
 

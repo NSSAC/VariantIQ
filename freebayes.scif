@@ -1,10 +1,3 @@
-%appinstall freebayes
-
-cp /docker_context/freebayes_environment.yml .
-# create and provision the environment, utilizing
-# the environment name specified in the file ("freebayes").
-micromamba install --yes --name base --file freebayes_environment.yml
-
 %apprun freebayes
 #we're running freebayes within the  freebayes environment here...
 CMD="freebayes $@"

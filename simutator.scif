@@ -2,11 +2,11 @@
 cd /bioinf-tools
 git clone https://github.com/iqbal-lab-org/simutator
 cd simutator
-pip install .
+micromamba run --name base pip install .
 rm -rf .git
 
 %apprun simutator
-simutator $@
+micromamba run --name base simutator $@
 
 %apprun simutator_sciduct
 mkdir -p $SCIF_APPDATA

@@ -1,0 +1,4 @@
+%appinstall variantiq
+cp /docker_context/environment.yml .
+micromamba install --yes --name base --file environment.yml
+

@@ -1,22 +1,6 @@
-%appinstall vcfdist
-# copy the env file into the container, to have it
-# available in case anyone wants to use it to
-# test the varifier app, without the container
-# The current directory for this %appinstall will
-# be /scif/apps/varifier.
-
-cd /bioinf-tools
-git clone https://github.com/timd1/vcfdist
-cd vcfdist
-rm -rf .git
-cd src
-make
-make install
-cd ..
-
 %apprun vcfdist
 #we're running varifier within the  varifier environment here...
-CMD="vcfdist $@"
+CMD="micromamba run --name base vcfdist $@"
 echo "Running . . . $CMD"
 $CMD
 

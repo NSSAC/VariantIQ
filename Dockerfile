@@ -1,5 +1,5 @@
-FROM ghcr.io/nssac/mambascif AS mamba_scif_install
-FROM ghcr.io/iqbal-lab-org/minos
+FROM ghcr.io/iqbal-lab-org/minos as minos
+FROM ghcr.io/nssac/mambascif 
 
 ARG VERSION
 ENV VERSION=${VERSION:-0.0.0}
@@ -9,6 +9,7 @@ RUN apt-get update && \
     curl \
     git \
     jq \
+    libquadmath0 \
     tree && \
     apt-get clean --assume-yes
 
@@ -21,8 +22,11 @@ ENV ENV_NAME="base"
 ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
 ENV PATH="${MAMBA_ROOT_PREFIX}/bin:${PATH}"
-COPY --from=mamba_scif_install $MAMBA_EXE $MAMBA_EXE
-COPY --from=mamba_scif_install $MAMBA_ROOT_PREFIX $MAMBA_ROOT_PREFIX
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/conda/lib
+
+RUN ln -s /bioinf-tools/gramtools/gramtools/bin/gram /usr/local/bin/gramtools
+COPY --from=minos /bioinf-tools /bioinf-tools
+# COPY --from=mamba_scif_install $MAMBA_ROOT_PREFIX $MAMBA_ROOT_PREFIX
 
 RUN --mount=type=secret,id=gh_token \
   ls -la /run/secrets
@@ -34,6 +38,9 @@ RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
 
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
    scif install /tmp/sciduct.scif
+
+RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
+   scif install /docker_context/variantiq.scif
 
 RUN --mount=type=secret,id=gh_token --mount=type=bind,target=/docker_context\
     scif install /docker_context/minos.scif

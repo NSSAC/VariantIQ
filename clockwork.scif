@@ -1,21 +1,11 @@
 %appinstall clockwork
-# copy the env file into the container, to have it
-# available in case anyone wants to use it to
-# test the varifier app, without the container
-# The current directory for this %appinstall will
-# be /scif/apps/varifier.
-cp /docker_context/clockwork_environment.yml .
-# create and provision the environment, utilizing
-# the environment name specified in the file ("varifier").
-micromamba install --yes --name base --file clockwork_environment.yml
-
 cd /bioinf-tools
 git clone --recursive https://github.com/iqbal-lab/cortex.git
 cd cortex
 git checkout c8147152cd4015c45057900e8fb600376d1d7fb3
-bash install.sh
-make NUM_COLS=1 cortex_var
-make NUM_COLS=2 cortex_var
+micromamba run --name base bash install.sh \
+    && make NUM_COLS=1 cortex_var \
+    && make NUM_COLS=2 cortex_var
 rm -rf .git
 
 cd /
