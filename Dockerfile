@@ -35,8 +35,6 @@ RUN ln -s /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.s
 RUN mkdir /bioinf-tools 
 
 RUN scif install /docker_context/variantiq.scif
-RUN micromamba run --name variantiq pip install "git+https://github.com/iqbal-lab-org/minos@v0.12.6"
-
 RUN scif install /docker_context/minos.scif
 RUN scif install /docker_context/varifier.scif
 RUN scif install /docker_context/simutator.scif    
