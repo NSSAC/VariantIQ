@@ -1,6 +1,6 @@
 %apprun snippy
 #we're running snippy within the  snippy environment here...
-CMD="micromamba run --name base snippy $@"
+CMD="micromamba run --name variantiq snippy $@"
 echo "Running . . . $CMD"
 $CMD
 

@@ -1,8 +1,9 @@
-name: base
+name: variantiq
 channels:
   - conda-forge
   - bioconda
 dependencies:
+  - python >=3.7,<3.8.0
   - vcfdist
   - freebayes
   - snippy
@@ -20,9 +21,21 @@ dependencies:
   - nextflow
   - bcftools
   - minimap2
+  - samtools
+  - libclang
+  - cmake 
+  - gcc_linux-64
+  - libzlib
+  - libcurl
+  - pybedtools
+  - make
+  - sra-tools
   - pip:
+    - git+https://github.com/iqbal-lab-org/gramtools
     - git+https://github.com/iqbal-lab-org/ivcfmerge
-    - git+https://github.com/iqbal-lab-org/minos@v0.12.6
+    - git+https://github.com/iqbal-lab-org/simutator
+
+    
 
 
 

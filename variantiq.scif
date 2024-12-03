@@ -1,11 +1,3 @@
 %appinstall variantiq
-micromamba install --yes --name base --file /docker_context/environment.yml
-
-cd /bioinf-tools
-git clone https://github.com/atks/vt.git --recursive vt-git
-cd vt-git
-make
-rm -rf .git
-cd ..
-cp vt-git/vt /usr/local/bin/
-
+micromamba create --yes --file /docker_context/environment.yml
+#micromamba run --name variantiq pip install "git+https://github.com/iqbal-lab-org/minos@v0.12.6"

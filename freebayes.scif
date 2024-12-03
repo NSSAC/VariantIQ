@@ -1,6 +1,6 @@
 %apprun freebayes
 #we're running freebayes within the  freebayes environment here...
-CMD="freebayes $@"
+CMD="micromamba run --name variantiq freebayes $@"
 echo "Running . . . $CMD"
 $CMD
 
