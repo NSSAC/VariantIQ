@@ -31,7 +31,7 @@ RUN apt-get update && \
     apt-get clean --assume-yes
 
 RUN pip install --break-system-packages "setuptools<58.0.0" 
-RUN pip install --break-system-packages git+https://github.com/iqbal-lab-org/gramtools.git
+RUN pip install --break-system-packages "https://github.com/iqbal-lab-org/gramtools.git"
 RUN mkdir /scif_files
 COPY ./*.scif /docker_context/
 COPY ./*.yml /docker_context/
