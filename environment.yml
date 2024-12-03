@@ -3,9 +3,6 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - gcc
-  - make
-  - automake
   - vcfdist
   - freebayes
   - snippy
@@ -17,20 +14,14 @@ dependencies:
   - picard
   - seqtk
   - trimmomatic
+  - mummer
   - libzlib
+  - vcftools
+  - nextflow
+  - bcftools
+  - minimap2
   - pip:
-    - python-dateutil
-    - requests
-    - pysam
-    - pyfastaq
-    - pymysql
-    - numpy
-    - openpyxl
-    - pyflakes
-    - scipy
-    - XlsxWriter
-    - tox
-    - six>=1.14.0
+    - git+https://github.com/iqbal-lab-org/ivcfmerge
     - git+https://github.com/iqbal-lab-org/minos@v0.12.6
 
 

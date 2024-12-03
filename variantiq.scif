@@ -1,4 +1,11 @@
 %appinstall variantiq
-cp /docker_context/environment.yml .
-micromamba install --yes --name base --file environment.yml
+micromamba install --yes --name base --file /docker_context/environment.yml
+
+cd /bioinf-tools
+git clone https://github.com/atks/vt.git --recursive vt-git
+cd vt-git
+make
+rm -rf .git
+cd ..
+cp vt-git/vt /usr/local/bin/
 
