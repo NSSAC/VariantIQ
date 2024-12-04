@@ -1,11 +1,9 @@
-name: base
+name: variantiq
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - gcc
-  - make
-  - automake
+  - python >=3.7,<3.8.0
   - vcfdist
   - freebayes
   - snippy
@@ -17,21 +15,27 @@ dependencies:
   - picard
   - seqtk
   - trimmomatic
+  - mummer
   - libzlib
+  - vcftools
+  - nextflow
+  - bcftools
+  - minimap2
+  - samtools
+  - libclang
+  - cmake 
+  - gcc_linux-64
+  - libzlib
+  - libcurl
+  - pybedtools
+  - make
+  - sra-tools
   - pip:
-    - python-dateutil
-    - requests
-    - pysam
-    - pyfastaq
-    - pymysql
-    - numpy
-    - openpyxl
-    - pyflakes
-    - scipy
-    - XlsxWriter
-    - tox
-    - six>=1.14.0
-    - git+https://github.com/iqbal-lab-org/minos@v0.12.6
+    - git+https://github.com/iqbal-lab-org/gramtools
+    - git+https://github.com/iqbal-lab-org/ivcfmerge
+    - git+https://github.com/iqbal-lab-org/simutator
+
+    
 
 
 

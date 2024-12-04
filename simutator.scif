@@ -1,12 +1,5 @@
-%appinstall simutator
-cd /bioinf-tools
-git clone https://github.com/iqbal-lab-org/simutator
-cd simutator
-micromamba run --name base pip install .
-rm -rf .git
-
 %apprun simutator
-micromamba run --name base simutator $@
+micromamba run --name variantiq simutator $@
 
 %apprun simutator_sciduct
 mkdir -p $SCIF_APPDATA
