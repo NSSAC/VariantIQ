@@ -9,4 +9,4 @@ docker run -it --rm --platform linux/amd64 -v $PATH_to_test_minos:/data ghcr.io/
 docker run -it --rm --platform linux/amd64 -v $PATH_to_test_varifier:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/truth_ref.fa /data/ref.fa /data/normalized_variants.vcf.gz /data/out_test_varifier --force
 
 #test simutator
-ocker run -it --rm --platform linux/amd64 -v $PATH_to_test_simutator:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/272631.5.fna /data/out_test_simutator
+docker run -it --rm --platform linux/amd64 -v $PATH_to_test_simutator:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/272631.5.fna /data/out_test_simutator
