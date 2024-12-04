@@ -1,0 +1,53 @@
+###### test pipeline
+#cd $PATH_to_data
+
+#install sratoolkit
+fastq-dump --split-files ERR2704678
+
+#H37Rv reference genome
+wget -O Mycobacterium_tuberculosis_H37Rv.fasta "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000962.3&db=nuccore&report=fasta&extrafeat=null&conwithfeat=on&hide-cdd=on"
+
+#Also download BV-BRC NC_000962 BVBRC_H37Rv_AL123456.fasta
+
+#minos truth genome
+wget -c https://figshare.com/ndownloader/files/30753355 -O - | tar -xz
+
+#run BVBRC variation service to get vcf files
+
+
+#test snippy
+#snippy --cpus 2 --outdir  test_snippy --prefix test --ref BVBRC_H37Rv_AL123456.fasta --R1 ERR2704678_1.fastq --R2 ERR2704678_2.fastq --unmapped --report --force
+snippy --cpus 2 --ref BVBRC_H37Rv_AL123456.fasta --R1 ERR2704678_1.fastq --R2 ERR2704678_2.fastq --outdir snippy_output --basequal 20 --unmapped --report --force
+
+#test SNP pipeline
+bwa index BVBRC_H37Rv_AL123456.fasta
+bwa mem BVBRC_H37Rv_AL123456.fasta ERR2704678_1.fastq ERR2704678_2.fastq > ERR2704678_bwa-mem_aligned_reads.sam
+samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam > ERR2704678_bwa-mem_aligned_reads.bam
+samtools sort ERR2704678_bwa-mem_aligned_reads.bam -o ERR2704678_bwa-mem_aligned_reads.sorted.bam
+picard MarkDuplicates I=ERR2704678_bwa-mem_aligned_reads.sorted.bam O=dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam M=metrics.txt
+samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bamm
+bcftools mpileup -f BVBRC_H37Rv_AL123456.fasta dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bcftools call -mv -Oz -o ERR2704678_variants_bcftools.vcf.gz
+freebayes -f BVBRC_H37Rv_AL123456.fasta --ploidy 1 dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bgzip -c > ERR2704678_variants_freebayes.vcf.gz
+
+tabix -p vcf ERR2704678_variants_bcftools.vcf.gz
+tabix -p vcf ERR2704678_variants_freebayes.vcf.gz
+
+bcftools norm -m -both -f BVBRC_H37Rv_AL123456.fasta ERR2704678_variants_bcftools.vcf.gz -Oz -o normalized_ERR2704678_variants_bcftools.vcf.gz
+bcftools norm -m -both -f BVBRC_H37Rv_AL123456.fasta ERR2704678_variants_freebayes.vcf.gz -Oz -o normalized_ERR2704678_variants_freebayes.vcf.gz
+
+#vt normalize -r BVBRC_H37Rv_AL123456.fasta  ERR2704678_variants_bcftools.vcf.gz > vt_normalized_ERR2704678_variants_bcftools.vcf.gz
+#vt normalize -r BVBRC_H37Rv_AL123456.fasta  ERR2704678_variants_freebayes.vcf.gz > vt_normalized_ERR2704678_variants_freebayes.vcf.gz
+
+#test minos
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq:0.0.10 run minos adjudicate --reads /data/ERR2704678_1.fastq --reads /data/ERR2704678_2.fastq /data/test_minos_variantiq /data/BVBRC_H37Rv_AL123456.fasta /data/normalized_ERR2704678_bwa_bcftools.vcf.gz /data/normalized_ERR2704678_bwa_bcftools.vcf.gz --force
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run minos adjudicate --reads /data/ERR2704678_1.fastq --reads /data/ERR2704678_2.fastq /data/test_minos_variantiq /data/BVBRC_H37Rv_AL123456.fasta /data/normalized_ERR2704678_bwa_bcftools.vcf.gz /data/normalized_ERR2704678_bwa_bcftools.vcf.gz --force
+
+#test varifier
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/mtb.N0054.fasta /data/BVBRC_H37Rv_AL123456.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/test_varifier --force
+
+#docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/BVBRC_H37Rv_AL123456.fasta /data/BVBRC_H37Rv_AL123456.fasta /data/test_simutator.snp.dist-100.mutated.vcf /data/test_varifier --force
+docker run --rm --platform linux/amd64 -v /Users/cm4su/Documents/minos_test/test_varifier:/data ghcr.io/nssac/variantiq:0.0.10 run varifier vcf_eval /data/truth_ref.fa /data/ref.fa /data/normalized_variants.vcf.gz /data/out_test_varifier_variantiq6 --force
+
+#test simutator
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/BVBRC_H37Rv_AL123456.fasta /data/test_simutator
+
