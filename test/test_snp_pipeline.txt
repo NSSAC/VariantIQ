@@ -45,9 +45,6 @@ docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/
 #test varifier
 docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/mtb.N0054.fasta /data/BVBRC_H37Rv_AL123456.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/test_varifier --force
 
-#docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/BVBRC_H37Rv_AL123456.fasta /data/BVBRC_H37Rv_AL123456.fasta /data/test_simutator.snp.dist-100.mutated.vcf /data/test_varifier --force
-docker run --rm --platform linux/amd64 -v /Users/cm4su/Documents/minos_test/test_varifier:/data ghcr.io/nssac/variantiq:0.0.10 run varifier vcf_eval /data/truth_ref.fa /data/ref.fa /data/normalized_variants.vcf.gz /data/out_test_varifier_variantiq6 --force
-
 #test simutator
 docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/BVBRC_H37Rv_AL123456.fasta /data/test_simutator
 
