@@ -25,7 +25,7 @@ bwa mem BVBRC_H37Rv_AL123456.fasta ERR2704678_1.fastq ERR2704678_2.fastq > ERR27
 samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam > ERR2704678_bwa-mem_aligned_reads.bam
 samtools sort ERR2704678_bwa-mem_aligned_reads.bam -o ERR2704678_bwa-mem_aligned_reads.sorted.bam
 picard MarkDuplicates I=ERR2704678_bwa-mem_aligned_reads.sorted.bam O=dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam M=metrics.txt
-samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bamm
+samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam
 bcftools mpileup -f BVBRC_H37Rv_AL123456.fasta dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bcftools call -mv -Oz -o ERR2704678_variants_bcftools.vcf.gz
 freebayes -f BVBRC_H37Rv_AL123456.fasta --ploidy 1 dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bgzip -c > ERR2704678_variants_freebayes.vcf.gz
 
