@@ -1,0 +1,55 @@
+###### test pipeline
+docker pull ghcr.io/iqbal-lab-org/minos:latest
+docker pull quay.io/iqballab/varifier:latest
+docker pull --platform linux/amd64 ghcr.io/nssac/variantiq:latest
+
+#cd $PATH_to_data
+
+#install sratoolkit
+fastq-dump --split-files ERR2704678
+
+#H37Rv reference genome
+wget -O Mycobacterium_tuberculosis_H37Rv.fasta "https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=NC_000962.3&db=nuccore&report=fasta&extrafeat=null&conwithfeat=on&hide-cdd=on"
+
+#minos truth genome
+wget -c https://figshare.com/ndownloader/files/30753355 -O - | tar -xz
+
+#test snippy
+#snippy --cpus 2 --outdir  test_snippy --prefix test --ref Mycobacterium_tuberculosis_H37Rv.fasta --R1 ERR2704678_1.fastq --R2 ERR2704678_2.fastq --unmapped --report --force
+snippy --cpus 2 --ref Mycobacterium_tuberculosis_H37Rv.fasta --R1 ERR2704678_1.fastq --R2 ERR2704678_2.fastq --outdir snippy_output --basequal 20 --unmapped --report --force
+
+#test SNP pipeline
+bwa index Mycobacterium_tuberculosis_H37Rv.fasta
+bwa mem Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_1.fastq ERR2704678_2.fastq > ERR2704678_bwa-mem_aligned_reads.sam
+samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam > ERR2704678_bwa-mem_aligned_reads.bam
+samtools sort ERR2704678_bwa-mem_aligned_reads.bam -o ERR2704678_bwa-mem_aligned_reads.sorted.bam
+picard MarkDuplicates I=ERR2704678_bwa-mem_aligned_reads.sorted.bam O=dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam M=metrics.txt
+samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam
+bcftools mpileup -f Mycobacterium_tuberculosis_H37Rv.fasta dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bcftools call -mv -Oz -o ERR2704678_variants_bcftools.vcf.gz
+freebayes -f Mycobacterium_tuberculosis_H37Rv.fasta --ploidy 1 dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bgzip -c > ERR2704678_variants_freebayes.vcf.gz
+
+tabix -p vcf ERR2704678_variants_bcftools.vcf.gz
+tabix -p vcf ERR2704678_variants_freebayes.vcf.gz
+
+bcftools norm -m -both -f Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_variants_bcftools.vcf.gz -Oz -o normalized_ERR2704678_variants_bcftools.vcf.gz
+bcftools norm -m -both -f Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_variants_freebayes.vcf.gz -Oz -o normalized_ERR2704678_variants_freebayes.vcf.gz
+
+#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_bcftools.vcf.gz > vt_normalized_ERR2704678_variants_bcftools.vcf.gz
+#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_freebayes.vcf.gz > vt_normalized_ERR2704678_variants_freebayes.vcf.gz
+
+#test minos
+#test ighcr.io/iqbal-lab-org/minos
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/iqbal-lab-org/minos:latest minos adjudicate --reads /data/ERR2704678_1.fastq --reads /data/ERR2704678_2.fastq /data/test_minos /data/Mycobacterium_tuberculosis_H37Rv.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/normalized_ERR2704678_variants_freebayes.vcf.gz --force
+
+#test ghcr.io/nssac/variantiq
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run minos adjudicate --reads /data/ERR2704678_1.fastq --reads /data/ERR2704678_2.fastq /data/test_minos_variantiq /data/Mycobacterium_tuberculosis_H37Rv.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/normalized_ERR2704678_variants_freebayes.vcf.gz --force
+
+#test varifier
+$test quay.io/iqballab/varifier
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data quay.io/iqballab/varifier varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/mtb.N0054.fasta /data/Mycobacterium_tuberculosis_H37Rv.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/test_varifier --force
+
+#test ghcr.io/nssac/variantiq
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/Minos.biorxiv.202109.data/Assemblies/mtb.N0054.fasta /data/Mycobacterium_tuberculosis_H37Rv.fasta /data/normalized_ERR2704678_variants_bcftools.vcf.gz /data/test_varifier_variantiq --force
+
+#test simutator
+docker run -it --rm --platform linux/amd64 -v $PATH_to_data:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/Mycobacterium_tuberculosis_H37Rv.fasta /data/test_simutator
