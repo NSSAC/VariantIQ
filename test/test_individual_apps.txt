@@ -1,0 +1,12 @@
+###### test individual apps in the test folder 
+#test minos
+#In test_minos folder $PATH_to_test_minos
+fastq-dump --split-files SRR847052
+docker run -it --rm --platform linux/amd64 -v $PATH_to_test_minos:/data ghcr.io/nssac/variantiq run minos -- adjudicate --reads /data/SRR847052_1.fastq --reads /data/SRR847052_2.fastq /data/out_test_minos /data/272631.5.fna /data/normalized.vcf.gz --force
+docker run -it --rm --platform linux/amd64 -v $PATH_to_test_minos:/data ghcr.io/nssac/variantiq run minos -- adjudicate --reads /data/SRR847052_1.fastq --reads /data/SRR847052_2.fastq /data/out_test_minos /data/272631.5.fna /data/normalized_PE1.var_SRR847052_BWA_bcf.vcf.gz /data/normalized_PE1.var_SRR847052_BWA_free.vcf.gz --force
+
+#test varifier
+docker run -it --rm --platform linux/amd64 -v $PATH_to_test_varifier:/data ghcr.io/nssac/variantiq run varifier vcf_eval /data/truth_ref.fa /data/ref.fa /data/normalized_variants.vcf.gz /data/out_test_varifier --force
+
+#test simutator
+docker run -it --rm --platform linux/amd64 -v $PATH_to_test_simutator:/data ghcr.io/nssac/variantiq run simutator mutate_fasta --snps 100 /data/272631.5.fna /data/out_test_simutator
