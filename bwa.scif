@@ -1,0 +1,5 @@
+%appinstall bwa
+micromamba create --yes --file /docker_context/bwa_env.yml
+
+%apprun bwa
+micromamba run --name bwa bwa $@

@@ -1,6 +1,9 @@
+%appinstall freebayes
+micromamba create --yes --file /docker_context/freebayes_env.yml
+
 %apprun freebayes
 #we're running freebayes within the  freebayes environment here...
-CMD="micromamba run --name variantiq freebayes $@"
+CMD="micromamba run --name freebayes freebayes $@"
 echo "Running . . . $CMD"
 $CMD
 

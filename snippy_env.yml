@@ -1,0 +1,10 @@
+name: snippy
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - snippy
+
+ 
+
+

@@ -1,0 +1,14 @@
+%appinstall picard
+micromamba create --yes --file /docker_context/picard_env.yml
+
+%apprun picard
+#we're running picard within the  picard environment here...
+CMD="micromamba run --name picard picard $@"
+echo "Running . . . $CMD"
+$CMD
+
+%apprun varfier_sciduct
+mkdir -p $SCIF_APPDATA
+#extract params from /job/job.json
+#NAME="$(jq -r .input.name /job/job.json)"
+#scif run picard -- ....params...

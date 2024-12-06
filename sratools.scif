@@ -1,0 +1,5 @@
+%appinstall sratools
+micromamba create --yes --file /docker_context/sratools_env.yml
+
+%apprun fastq-dump
+micromamba run --name sratools fastq-dump $@

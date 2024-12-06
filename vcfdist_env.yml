@@ -1,0 +1,9 @@
+name: vcfdist
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - vcfdist
+ 
+
+

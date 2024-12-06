@@ -1,8 +1,16 @@
+%appinstall snippy
+micromamba create --yes --file /docker_context/snippy_env.yml
+
 %apprun snippy
 #we're running snippy within the  snippy environment here...
-CMD="micromamba run --name variantiq snippy $@"
-echo "Running . . . $CMD"
+CMD="micromamba run --name snippy snippy $@"
 $CMD
+
+%apprun snippy-samtools
+#we're running snippy within the  snippy environment here...
+CMD="micromamba run --name snippy samtools $@"
+$CMD
+
 
 %apprun snippy_sciduct
 mkdir -p $SCIF_APPDATA
