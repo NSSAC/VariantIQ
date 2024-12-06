@@ -56,6 +56,11 @@ COPY ./sratools* /docker_context/
 RUN scif install /docker_context/sratools.scif 
 COPY ./bwa* /docker_context/
 RUN scif install /docker_context/bwa.scif 
+COPY ./picard* /docker_context/
+RUN scif install /docker_context/picard.scif 
+COPY ./tabix* /docker_context/
+RUN scif install /docker_context/tabix.scif 
+
 
 COPY config.json /docker_context/
 RUN --mount=type=secret,id=gh_token \
@@ -67,7 +72,6 @@ RUN --mount=type=secret,id=gh_token \
 RUN rm -rf /run/secrets || true
 
 RUN rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost $AGENT_TOOLSDIRECTORY
-
 
 ENTRYPOINT ["scif","--quiet"]
 
