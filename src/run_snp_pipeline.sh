@@ -43,7 +43,7 @@ mkdir -p $SNIPPY_OUT
 
 # bcf variants
 #scif run bcftools mpileup -f $REF_GENOME_FILE ${OUTPUT}/${SRAID}_dedup_bwa-mem_aligned_reads.sorted.bam -o ${OUTPUT}/${SRAID}_dedup.mpileup.vcf 
-#scif run bcftools call -mv -Ov -o ${OUTPUT}/${SRAID}_variants_bcftools.vcf ${OUTPUT}/${SRAID}_dedup.mpileup.vcf
+#scif run bcftools call --ploidy 1 -mv -Ov -o ${OUTPUT}/${SRAID}_variants_bcftools.vcf ${OUTPUT}/${SRAID}_dedup.mpileup.vcf
 #rm ${OUTPUT}/${SRAID}_dedup.mpileup.vcf
 
 # freebayes variants
