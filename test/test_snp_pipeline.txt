@@ -23,8 +23,8 @@ snippy --cpus 2 --ref Mycobacterium_tuberculosis_H37Rv.fasta --R1 ERR2704678_1.f
 
 #test SNP pipeline
 bwa index Mycobacterium_tuberculosis_H37Rv.fasta
-bwa mem Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_1.fastq ERR2704678_2.fastq > ERR2704678_bwa-mem_aligned_reads.sam
-samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam > ERR2704678_bwa-mem_aligned_reads.bam
+bwa mem Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_1.fastq ERR2704678_2.fastq -o ERR2704678_bwa-mem_aligned_reads.sam
+samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam -o ERR2704678_bwa-mem_aligned_reads.bam
 samtools sort ERR2704678_bwa-mem_aligned_reads.bam -o ERR2704678_bwa-mem_aligned_reads.sorted.bam
 picard MarkDuplicates I=ERR2704678_bwa-mem_aligned_reads.sorted.bam O=dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam M=metrics.txt
 samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam
@@ -35,8 +35,8 @@ bcftools norm -f Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_variants_bcft
 bcftools norm -f Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_variants_freebayes.vcf -o normalized_ERR2704678_variants_freebayes.vcf
 
 #alternative normalization using vt
-#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_bcftools.vcf > vt_normalized_ERR2704678_variants_bcftools.vcf
-#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_freebayes.vcf > vt_normalized_ERR2704678_variants_freebayes.vcf
+#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_bcftools.vcf -o vt_normalized_ERR2704678_variants_bcftools.vcf
+#vt normalize -r Mycobacterium_tuberculosis_H37Rv.fasta  ERR2704678_variants_freebayes.vcf -o vt_normalized_ERR2704678_variants_freebayes.vcf
 
 minos adjudicate --reads ERR2704678_1.fastq --reads ERR2704678_2.fastq test_minos Mycobacterium_tuberculosis_H37Rv.fasta normalized_ERR2704678_variants_bcftools.vcf ERR2704678_variants_freebayes.vcf --force
 varifier vcf_eval Minos.biorxiv.202109.data/Assemblies/mtb.N0054.fasta Mycobacterium_tuberculosis_H37Rv.fasta normalized_ERR2704678_variants_bcftools.vcf.gz test_varifier --force
