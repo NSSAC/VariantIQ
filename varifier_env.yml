@@ -1,0 +1,9 @@
+name: varifier
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - varifier
+ 
+
+

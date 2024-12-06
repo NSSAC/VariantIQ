@@ -1,19 +1,2 @@
-%appinstall clockwork
-cd /bioinf-tools
-git clone --recursive https://github.com/iqbal-lab/cortex.git
-cd cortex
-git checkout c8147152cd4015c45057900e8fb600376d1d7fb3
-micromamba run --name base bash install.sh \
-    && make NUM_COLS=1 cortex_var \
-    && make NUM_COLS=2 cortex_var
-rm -rf .git
-
-cd /
-git clone --recursive https://github.com/iqbal-lab-org/clockwork.git
-rm -rf /clockwork/.git
-
-cd /clockwork/python
-micromamba run --name base python setup.py install
-
 %apprun clockwork
-micromamba run --name base clockwork $@
+clockwork $@

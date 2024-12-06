@@ -1,0 +1,9 @@
+name: bwa
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bwa
+ 
+
+
