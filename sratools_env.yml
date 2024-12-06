@@ -1,4 +1,4 @@
-name: sratoolkit
+name: sratools
 channels:
   - conda-forge
   - bioconda
