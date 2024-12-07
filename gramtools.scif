@@ -1,2 +1,2 @@
 %apprun gramtools
-gramtools $@
+exec gramtools $@
