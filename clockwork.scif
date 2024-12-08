@@ -1,2 +1,5 @@
 %apprun clockwork
 clockwork $@
+
+%apprun vt
+vt $@

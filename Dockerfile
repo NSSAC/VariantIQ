@@ -1,5 +1,6 @@
 # FROM ghcr.io/nssac/mambascif as mamba_scif_install
-FROM ghcr.io/iqbal-lab-org/minos as minos
+FROM vanessa/scif-go AS scifgo
+FROM ghcr.io/iqbal-lab-org/minos AS minos
 FROM ghcr.io/iqbal-lab-org/clockwork
 
 ARG VERSION
@@ -10,7 +11,8 @@ RUN apt-get update && \
     curl \
     git \
     jq \
-#     tree \
+    tree \
+    musl-dev \
     && apt-get clean --assume-yes
 
 # Don't fail on first-time host key check for any %appinstall
@@ -22,12 +24,16 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 #setup mamba and scif
 ENV ENV_NAME="base"
-ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
 RUN pip3 install --upgrade requests
-RUN pip3 install scif
+
+# for scif go
+RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
+COPY --from=scifgo /usr/local/bin/scif /usr/bin/
+
 COPY /installmamba.sh /opt/
 RUN /opt/installmamba.sh && rm /opt/installmamba.sh
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
 
 # build mamba 'base' env
 RUN micromamba install --name $ENV_NAME python=3.11 -y -c conda-forge && \

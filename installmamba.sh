@@ -20,7 +20,7 @@ esac
 BIN_FOLDER="${BIN_FOLDER:-/bin}"
 INIT_YES="${INIT_YES:-yes}"
 CONDA_FORGE_YES="${CONDA_FORGE_YES:-yes}"
-PREFIX_LOCATION="${PREFIX_LOCATION:-/opt/micromamba}"
+PREFIX_LOCATION="${PREFIX_LOCATION:-/opt/conda}"
 MAMBA_ROOT_PREFIX=/opt/conda
 
 # Computing artifact location
