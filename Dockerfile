@@ -1,4 +1,6 @@
-FROM ghcr.io/nssac/mambascif as mamba_scif_install
+# FROM ghcr.io/nssac/mambascif as mamba_scif_install
+FROM vanessa/scif-go AS scifgo
+FROM ghcr.io/iqbal-lab-org/minos AS minos
 FROM ghcr.io/iqbal-lab-org/clockwork
 
 ARG VERSION
@@ -9,18 +11,8 @@ RUN apt-get update && \
     curl \
     git \
     jq \
-#     # libquadmath0 \
-#     tree \
-#     # gcc \
-#     # g++ \
-#     # build-essential \
-#     # pkg-config \
-#     # wget \
-#     # make \
-#     # zlib1g-dev \
-#     # libbz2-dev  \
-#     # liblzma-dev \
-#     # libcrypto++-dev \
+    tree \
+    musl-dev \
     && apt-get clean --assume-yes
 
 # Don't fail on first-time host key check for any %appinstall
@@ -29,12 +21,23 @@ RUN mkdir -p /etc/ssh
 RUN echo "StrictHostKeyChecking accept-new" >> /etc/ssh/ssh_config
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+
+#setup mamba and scif
 ENV ENV_NAME="base"
-ENV MAMBA_ROOT_PREFIX="/opt/conda"
 ENV MAMBA_EXE="/bin/micromamba"
-COPY --from=mamba_scif_install $MAMBA_EXE $MAMBA_EXE
-COPY --from=mamba_scif_install $MAMBA_ROOT_PREFIX $MAMBA_ROOT_PREFIX
-RUN ln -s /opt/conda/bin/scif /usr/local/bin/scif
+RUN pip3 install --upgrade requests
+
+# for scif go
+RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
+COPY --from=scifgo /usr/local/bin/scif /usr/bin/
+
+COPY /installmamba.sh /opt/
+RUN /opt/installmamba.sh && rm /opt/installmamba.sh
+ENV MAMBA_ROOT_PREFIX="/opt/conda"
+
+# build mamba 'base' env
+RUN micromamba install --name $ENV_NAME python=3.11 -y -c conda-forge && \
+    micromamba run --name $ENV_NAME pip install ipython jsonschema 
 
 COPY ./varifier* /docker_context/
 RUN scif install /docker_context/varifier.scif
@@ -46,21 +49,28 @@ COPY ./snippy* /docker_context/
 RUN scif install /docker_context/snippy.scif   
 COPY ./freebayes* /docker_context/
 RUN scif install /docker_context/freebayes.scif 
+COPY ./sratools* /docker_context/
+RUN scif install /docker_context/sratools.scif 
+COPY ./bwa* /docker_context/
+RUN scif install /docker_context/bwa.scif 
+COPY ./picard* /docker_context/
+COPY ./picard.sh /bioinf-tools/picard
+RUN scif install /docker_context/picard.scif 
+COPY ./tabix* /docker_context/
+RUN scif install /docker_context/tabix.scif 
+
+# copy the gramtools from minos becuase the one from clockwork is broken (ldd gram)
+# the one from minus is already compiled, just needs to be installed
+# It links against the correct htslib
+COPY --from=minos /bioinf-tools/gramtools /bioinf-tools/gramtools
+RUN cd /bioinf-tools/gramtools && pip3 install -e .
+
 COPY ./clockwork* /docker_context/
 RUN scif install /docker_context/clockwork.scif 
 COPY ./minos* /docker_context/
 RUN scif install /docker_context/minos.scif 
 COPY ./gramtools* /docker_context/
 RUN scif install /docker_context/gramtools.scif 
-COPY ./sratools* /docker_context/
-RUN scif install /docker_context/sratools.scif 
-COPY ./bwa* /docker_context/
-RUN scif install /docker_context/bwa.scif 
-COPY ./picard* /docker_context/
-RUN scif install /docker_context/picard.scif 
-COPY ./tabix* /docker_context/
-RUN scif install /docker_context/tabix.scif 
-
 
 COPY config.json /docker_context/
 RUN --mount=type=secret,id=gh_token \

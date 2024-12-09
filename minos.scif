@@ -1,12 +1,15 @@
 %apprun minos
 echo "Running 'minos $@'"
-minos $@
+exec minos $@
 
 %apprun bcftools
-bcftools $@
+excec bcftools $@
 
 %apprun minos-samtools
-samtools $@
+excec samtools $@
+
+%apprun vt
+exec vt $@
 
 %apprun minos_sciduct
 mkdir -p $SCIF_APPDATA
