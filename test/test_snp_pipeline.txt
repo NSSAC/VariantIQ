@@ -28,7 +28,7 @@ samtools view -S -b ERR2704678_bwa-mem_aligned_reads.sam -o ERR2704678_bwa-mem_a
 samtools sort ERR2704678_bwa-mem_aligned_reads.bam -o ERR2704678_bwa-mem_aligned_reads.sorted.bam
 picard MarkDuplicates I=ERR2704678_bwa-mem_aligned_reads.sorted.bam O=dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam M=metrics.txt
 samtools index dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam
-bcftools mpileup -f Mycobacterium_tuberculosis_H37Rv.fasta dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bcftools call -mv -Ov -o ERR2704678_variants_bcftools.vcf
+bcftools mpileup -f Mycobacterium_tuberculosis_H37Rv.fasta dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam | bcftools call --ploidy 1 -mv -Ov -o ERR2704678_variants_bcftools.vcf
 freebayes -f Mycobacterium_tuberculosis_H37Rv.fasta --ploidy 1 dedup_ERR2704678_bwa-mem_aligned_reads.sorted.bam -v ERR2704678_variants_freebayes.vcf
 
 bcftools norm -f Mycobacterium_tuberculosis_H37Rv.fasta ERR2704678_variants_bcftools.vcf -o normalized_ERR2704678_variants_bcftools.vcf
