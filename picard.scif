@@ -1,9 +1,6 @@
-%appinstall picard
-micromamba create --yes --file /docker_context/picard_env.yml
-
 %apprun picard
 #we're running picard within the  picard environment here...
-CMD="micromamba run --name picard picard $@"
+CMD="picard $@"
 echo "Running . . . $CMD"
 $CMD
 

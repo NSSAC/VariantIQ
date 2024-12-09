@@ -1,5 +1,2 @@
 %apprun tabix
 tabix $@
-
-%apprun vt
-vt $@
