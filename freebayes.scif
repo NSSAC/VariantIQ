@@ -12,3 +12,4 @@ mkdir -p $SCIF_APPDATA
 #extract params from /job/job.json
 #NAME="$(jq -r .input.name /job/job.json)"
 #scif run freebayes -- ....params...
+
