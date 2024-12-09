@@ -18,7 +18,7 @@ scif run fastq-dump --split-files -O $OUTPUT $SRAID
 #get reference genome
 REF_GENOME_URL="https://www.ncbi.nlm.nih.gov/sviewer/viewer.fcgi?id=${REFERENCE_ACCESSION}&db=nuccore&report=fasta&extrafeat=null&conwithfeat=on&hide-cdd=on"
 REF_GENOME_FILE=${OUTPUT}/${REFERENCE_ACCESSION}.fasta
-wget -O $REF_GENOME_FILE $REF_GENOME_URL
+#wget -O $REF_GENOME_FILE $REF_GENOME_URL
 
 # get minos truth genome
 mkdir -p $OUTPUT/minos_truth_genome
@@ -30,11 +30,13 @@ MINOS_TRUTH=$OUTPUT/minos_truth_genome/${MT_FOLDER}
 echo "Minos Truth Genome: $MINOS_TRUTH"
 
 # run snippy
+echo "Snippy"
 SNIPPY_OUT=${OUTPUT}/snippy
 mkdir -p $SNIPPY_OUT
 scif run snippy --cpus $CPUS --outdir $SNIPPY_OUT --ref $REF_GENOME_FILE --R1 ${OUTPUT}/${SRAID}_1.fastq --R2 ${OUTPUT}/${SRAID}_2.fastq --unmapped --report --force
 
 # test SNP pipeline
+echo "SNP Pipeline"
 scif run bwa index $REF_GENOME_FILE
 scif run bwa mem $REF_GENOME_FILE  ${OUTPUT}/${SRAID}_1.fastq  ${OUTPUT}/${SRAID}_2.fastq -o ${OUTPUT}/${SRAID}_bwa-mem_aligned_reads.sam
 scif run snippy-samtools view -S -b ${OUTPUT}/${SRAID}_bwa-mem_aligned_reads.sam -o ${OUTPUT}/${SRAID}_bwa-mem_aligned_reads.bam
@@ -43,29 +45,34 @@ scif run picard MarkDuplicates I=${OUTPUT}/${SRAID}_bwa-mem_aligned_reads.sorted
 scif run snippy-samtools index ${OUTPUT}/${SRAID}_dedup_bwa-mem_aligned_reads.sorted.bam
 
 # bcf variants
+echo "BCF Variant calling"
 scif run bcftools mpileup -f $REF_GENOME_FILE ${OUTPUT}/${SRAID}_dedup_bwa-mem_aligned_reads.sorted.bam -o ${OUTPUT}/${SRAID}_dedup.mpileup.vcf 
 scif run bcftools call --ploidy 1 -mv -Ov -o ${OUTPUT}/${SRAID}_variants_bcftools.vcf ${OUTPUT}/${SRAID}_dedup.mpileup.vcf
 rm ${OUTPUT}/${SRAID}_dedup.mpileup.vcf
 
 # freebayes variants
+echo "Freebayes Variant Calling"
 scif run freebayes -f $REF_GENOME_FILE --ploidy 1 ${OUTPUT}/${SRAID}_dedup_bwa-mem_aligned_reads.sorted.bam -v ${OUTPUT}/${SRAID}_variants_freebayes.vcf
 
 #normalize with bcftools
+echo "Normalize with bcftools"
 scif run bcftools norm -f $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_bcftools.vcf -o ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf
 scif run bcftools norm -f $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_freebayes.vcf -o ${OUTPUT}/${SRAID}_bcf_normalized_variants_freebayes.vcf
 
 #normalize with vt
-vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_bcftools.vcf > ${OUTPUT}/${SRAID}_vt_normalized_variants_bcftools.vcf
-vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_freebayes.vcf > ${OUTPUT}/${SRAID}_vt_normalized_variants_freebayes.vcf
+echo "Normalize with vt"
+scif run vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_bcftools.vcf > ${OUTPUT}/${SRAID}_vt_normalized_variants_bcftools.vcf
+scif run vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_freebayes.vcf > ${OUTPUT}/${SRAID}_vt_normalized_variants_freebayes.vcf
 
 # minos adjudicate
-echo "Minos Adjudicate"
-mkdir -p $OUTPUT/minos
-minos adjudicate --reads ${OUTPUT}/${SRAID}_1.fastq --reads ${OUTPUT}/${SRAID}_2.fastq ${OUTPUT}/minos $REF_GENOME_FILE ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf ${OUTPUT}/${SRAID}_bcf_normalized_variants_freebayes.vcf --force
+echo "Minos Adjuticate"
+scif run minos adjudicate --reads ${OUTPUT}/${SRAID}_1.fastq --reads ${OUTPUT}/${SRAID}_2.fastq ${OUTPUT}/minos $REF_GENOME_FILE ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf ${OUTPUT}/${SRAID}_bcf_normalized_variants_freebayes.vcf --force
 
+echo "Varifier"
 mkdir -p $OUTPUT/varifier
 scif run varifier vcf_eval $MINOS_TRUTH/$MINOS_TRUTH_SUB $REF_GENOME_FILE ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf  $OUTPUT/varifier --force
 
+echo "Simutator"
 mkdir -p $OUTPUT/simutator
 cd $OUTPUT_simutator
 scif run simutator mutate_fasta --snps 100 $REF_GENOME_FILE $OUTPUT/simutator/${SRAID}
