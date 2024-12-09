@@ -72,8 +72,9 @@ echo "Varifier"
 mkdir -p $OUTPUT/varifier
 scif run varifier vcf_eval $MINOS_TRUTH/$MINOS_TRUTH_SUB $REF_GENOME_FILE ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf  $OUTPUT/varifier --force
 
-echo "Simutator"
-mkdir -p $OUTPUT/simutator
-cd $OUTPUT_simutator
-scif run simutator mutate_fasta --snps 100 $REF_GENOME_FILE $OUTPUT/simutator/${SRAID}
+#move Simulator section a separate script
+#echo "Simutator"
+#mkdir -p $OUTPUT/simutator
+#cd $OUTPUT_simutator
+#scif run simutator mutate_fasta --snps 100 $REF_GENOME_FILE $OUTPUT/simutator/${SRAID}
 
