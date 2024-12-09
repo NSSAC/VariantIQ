@@ -59,7 +59,7 @@ vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_bcftools.vcf > ${OU
 vt normalize -r $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_freebayes.vcf > ${OUTPUT}/${SRAID}_vt_normalized_variants_freebayes.vcf
 
 # minos adjudicate
-echo "Minos Adjuticate"
+echo "Minos Adjudicate"
 mkdir -p $OUTPUT/minos
 minos adjudicate --reads ${OUTPUT}/${SRAID}_1.fastq --reads ${OUTPUT}/${SRAID}_2.fastq ${OUTPUT}/minos $REF_GENOME_FILE ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf ${OUTPUT}/${SRAID}_bcf_normalized_variants_freebayes.vcf --force
 

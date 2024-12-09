@@ -81,7 +81,7 @@ RUN --mount=type=secret,id=gh_token \
 
 RUN rm -rf /run/secrets || true
 
-RUN rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost $AGENT_TOOLSDIRECTORY
+RUN rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost $AGENT_TOOLSDIRECTORY /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENTRYPOINT ["scif","--quiet"]
 
