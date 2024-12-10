@@ -39,7 +39,7 @@ RUN --mount=type=secret,id=gh_token \
 RUN --mount=type=secret,id=gh_token \
    scif install /tmp/sciduct.scif
 
-COPY benchmark_datasets/* /benchmark_datasets/
+COPY benchmark_dataset_definitions /benchmark_dataset_definitions
 
 RUN rm -rf /run/secrets || true
 
