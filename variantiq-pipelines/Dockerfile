@@ -72,6 +72,11 @@ RUN scif install /docker_context/minos.scif
 COPY ./gramtools* /docker_context/
 RUN scif install /docker_context/gramtools.scif 
 
+COPY src /src
+COPY ./variantiq* /docker_context/
+RUN scif install /docker_context/variantiq.scif 
+RUN rm -rf /src
+
 COPY config.json /docker_context/
 RUN --mount=type=secret,id=gh_token \
     curl https://$(cat /run/secrets/gh_token)@raw.githubusercontent.com/NSSAC/SciducTainer/refs/heads/main/sciduct.scif > /tmp/sciduct.scif 

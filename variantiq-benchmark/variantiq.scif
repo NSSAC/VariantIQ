@@ -1,0 +1,18 @@
+%appinstall benchmark
+ln -s /src/benchmark.py $SCIF_APPBIN_benchmark/benchmark
+
+%apprun benchmark
+#we're running varifier within the  varifier environment here...
+CMD="micromamba run --name base benchmark $@"
+echo "Running . . . $CMD"
+$CMD
+
+%appinstall build_benchmark_data
+ln -s /src/build_benchmark_data.py $SCIF_APPBIN_build_benchmark_data/build_benchmark_data
+
+%apprun build_benchmark_data
+#we're running varifier within the  varifier environment here...
+CMD="micromamba run --name base build_benchmark_data $@"
+echo "Running . . . $CMD"
+$CMD
+
