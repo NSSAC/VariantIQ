@@ -9,6 +9,6 @@ dependencies:
   - varifier
   - vcfdist
   - pip:
-    - click
+    - cyclopts
     - git+https://github.com/iqbal-lab-org/simutator
  
