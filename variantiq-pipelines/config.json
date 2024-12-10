@@ -1,0 +1,109 @@
+{ "image_type": "apptainer+scif",
+  "apps": [
+    {
+      "name": "Minos",
+      "app": "minos_sciduct",
+      "binds": {
+        "input": "/input",
+        "job": "/job",
+        "output": "/scif/data",
+	      "container_cache": "/cache"
+      },
+      "description": "Run Minos...",
+      "input_files": [
+      ],
+      "input_schema": {
+      },
+      "output_files": {
+        "associateJobMeta": true,
+        "isContainer": true,
+        "type": "folder",
+        "contents": [
+          {
+            "match": "${MATCH}/app001_sciduct/*.txt",
+            "type": "txt",
+            "isContainer": false
+          }
+	    ]
+      },
+      "output_schema": {
+      },
+      "resource_requirements": {
+        "cores": 1,
+        "timelimit": 60
+      }
+    },
+    {
+      "name": "Varifier",
+      "app": "varifier_sciduct",
+      "binds": {
+        "input": "/input",
+        "job": "/job",
+        "output": "/scif/data",
+	      "container_cache": "/cache"
+      },
+      "description": "Run Varifier...",
+      "input_files": [
+      ],
+      "input_schema": {
+      },
+      "output_files": {
+        "associateJobMeta": true,
+        "isContainer": true,
+        "type": "folder",
+        "contents": [
+          {
+            "match": "${MATCH}/app001_sciduct/*.txt",
+            "type": "txt",
+            "isContainer": false
+          }
+	    ]
+      },
+      "output_schema": {
+      },
+      "resource_requirements": {
+        "cores": 1,
+        "timelimit": 60
+      }
+    },
+    {
+      "name": "Simutator",
+      "app": "simutator_sciduct",
+      "binds": {
+        "input": "/input",
+        "job": "/job",
+        "output": "/scif/data",
+	      "container_cache": "/cache"
+      },
+      "description": "Run Simutator...",
+      "input_files": [
+      ],
+      "input_schema": {
+      },
+      "output_files": {
+        "associateJobMeta": true,
+        "isContainer": true,
+        "type": "folder",
+        "contents": [
+          {
+            "match": "${MATCH}/app001_sciduct/*.txt",
+            "type": "txt",
+            "isContainer": false
+          }
+	    ]
+      },
+      "output_schema": {
+      },
+      "resource_requirements": {
+        "cores": 1,
+        "timelimit": 60
+      }
+    }
+  ],
+  "authors": [
+    "Dustin Machi <dm8qs@virginia.edu>"
+  ],
+  "description": "VariantIq",
+  "license": "Commercial",
+  "version": "0.0.0"
+}

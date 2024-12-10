@@ -1,0 +1,14 @@
+name: base
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - pip
+  - setuptools
+  - sra-tools
+  - varifier
+  - vcfdist
+  - pip:
+    - cyclopts
+    - git+https://github.com/iqbal-lab-org/simutator
+ 

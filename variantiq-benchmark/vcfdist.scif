@@ -1,9 +1,6 @@
-%appinstall vcfdist
-micromamba create --yes --file /docker_context/vcfdist_env.yml
-
 %apprun vcfdist
 #we're running varifier within the  varifier environment here...
-CMD="micromamba run --name vcfdist vcfdist $@"
+CMD="micromamba run --name base vcfdist $@"
 echo "Running . . . $CMD"
 $CMD
 
