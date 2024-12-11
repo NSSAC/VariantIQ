@@ -21,7 +21,7 @@ def default_action(
     comparison_vcf_only: bool = False,
     script_template: str = None,
     datasets_definitions: str = "/benchmark_dataset_definitions",
-    output_directory: str = "./benchmark_data"
+    output_directory: str = "/output"
 ):
     """
     Parameters
@@ -93,6 +93,15 @@ def call_prerun_script(script_file,output_directory,dataset_definition_folder,da
     result = subprocess.run([f"{dataset_definition_folder}/{script_file}",output_directory], capture_output=True, text=True)
 
 def getReadsFromSRA(sraid,target_folder,data_def):
+    """
+    Checks if a truth genome has already been downloaded in the target folder, and if not
+    retrieves it.
+
+    Args:
+        sraid (str): SRA Accession
+        target_folder (str): The file path to save the read files
+        data_def (dict): The dataset definition
+    """
     try:
         cmd = FASTQDUMP + ["--split-files","-O",target_folder, sraid]
         result = subprocess.run(cmd,capture_output=True, text=True)
@@ -106,6 +115,18 @@ def getReadsFromSRA(sraid,target_folder,data_def):
     return [f"read_1.fastq",f"read_2.fastq"]
 
 def getReadFiles(read_files:Union[str,list],target_folder,row, data_def_folder,data_def,output_root):
+    """
+    Checks if a read_files has already been downloaded in the target folder, and if not
+    retrieves it.
+
+    Args:
+        read_files (Union[str,list]): Reference to the read_files.  
+        target_folder (str): The file path to save the read_files
+        row (dict): The entire row of data about the sample
+        data_def_folder (str): The path to the folder containing the dataset definition
+        data_def (dict): The dataset definition
+        output_root (str): The root output folder for the data build
+    """
     if not os.path.exists(f"{target_folder}/read_1.fastq") or not os.path.exists(f"{target_folder}/read_2.fastq"):
         print(f"Get Read Files: {read_files}")
         if data_def.get("get_read_files_script",False):
@@ -119,6 +140,18 @@ def getReadFiles(read_files:Union[str,list],target_folder,row, data_def_folder,d
                 return getReadsFromSRA(read_files,target_folder,data_def)
 
 def getReferenceGenome(reference_genome,target_folder,row,data_def_folder,data_def,output_root):
+    """
+    Checks if a reference genome has already been downloaded in the target folder, and if not
+    retrieves it.
+
+    Args:
+        reference_genome (str): Reference to the reference genome.  
+        target_folder (str): The file path to save the reference genome
+        row (dict): The entire row of data about the sample
+        data_def_folder (str): The path to the folder containing the dataset definition
+        data_def (dict): The dataset definition
+        output_root (str): The root output folder for the data build
+    """
     target_file = f"{target_folder}/reference_genome.fasta"
     if not os.path.exists(target_file): 
         print(f"Get Reference Genome: {reference_genome}")
@@ -137,6 +170,18 @@ def getReferenceGenome(reference_genome,target_folder,row,data_def_folder,data_d
     return target_file
 
 def getTruthGenome(truth_genome,target_folder,row,data_def_folder,data_def,output_root):
+    """
+    Checks if a truth genome has already been downloaded in the target folder, and if not
+    retrieves it.
+
+    Args:
+        truth_genome (str): Reference to the truth genome.  
+        target_folder (str): The file path to save the truth genome
+        row (dict): The entire row of data about the sample
+        data_def_folder (str): The path to the folder containing the dataset definition
+        data_def (dict): The dataset definition
+        output_root (str): The root output folder for the data build
+    """
     print(f"Get Truth Genome: {truth_genome}")
     target_file = f"{target_folder}/truth_genome.fasta"
     if not os.path.exists(target_file): 
@@ -185,6 +230,21 @@ def download_url_to_file(url: str, target_file: str) -> None:
         raise
 
 def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def):
+    """
+    Create the sample folder in the output directory
+
+    Args:
+        name (str): Sample file name,
+        read_files(Union[str,list]): Read Files reference for sample
+        reference_genome (str): Reference Genome for sample
+        truth_genome (str): Truth Genome for sample
+        row (dict): Entire sample row
+        pipeline_inputs_only (bool): Only retrieve the pipeline inputs
+        comparison_vcf_only (bool): Only retrieve benchmark vcfs
+        output_directory (str): Location to build the data
+        data_def_folder (str): Path to the dataset definition folder
+        data_def(dict): Dataset definition
+    """
     try:
         sample_folder = f"{output_directory}/{name}"
         os.mkdir(sample_folder)
