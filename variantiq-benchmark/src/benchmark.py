@@ -27,7 +27,7 @@ def default_action(
         print(f"Reading Sample CSV: {sample_file}")
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
-            run_varifier(f"{data_directory}/{row["sample_name"]}")
+            run_varifier(f"{data_directory}/{row['sample_name']}")
             # if running vcf tools
             #     run varifier make_truth_vcf truth_genome.vcf
             #     run vcftools
@@ -38,8 +38,9 @@ def default_action(
         # run report generator 
         
 def run_varifier(sample_folder):
-    cmd = VARIFIER + ["vcf_eval",f"{sample_folder}/truth_genome.fasta",f"{sample_folder}/reference_genome.fasta",f"{sample_folder}/*.vcf",f"${sample_folder}/_varifier"]
+    print(f"Run Varifier: {sample_folder}")
+    cmd = VARIFIER + ["vcf_eval",f"{sample_folder}/truth_genome.fasta",f"{sample_folder}/reference_genome.fasta",f"{sample_folder}/*.vcf",f"{sample_folder}/_varifier"]
     result = subprocess.run(cmd,capture_output=True, text=True)
-
+    print(f"Varifier Output: {result.stdout} {result.stderr}")
 
 benchmark()
