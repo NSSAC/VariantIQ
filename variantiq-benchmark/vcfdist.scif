@@ -1,6 +1,6 @@
 %apprun vcfdist
 #we're running varifier within the  varifier environment here...
-CMD="micromamba run --name base vcfdist $@"
+CMD="micromamba run --name variantiq vcfdist $@"
 echo "Running . . . $CMD"
 $CMD
 

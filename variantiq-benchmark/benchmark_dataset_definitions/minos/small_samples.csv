@@ -1,0 +1,3 @@
+sample_name,read_files,reference_genome,truth_genome
+N0004_ERR2704675,ERR2704675,NC_000962.3,mtb.N0004.fasta
+N0004_ERR2704696,ERR2704696,NC_000962.3,mtb.N0004.fasta

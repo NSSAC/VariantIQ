@@ -14,19 +14,26 @@ ENV VERSION=${VERSION:-0.0.0}
 
 # build mamba 'base' env
 RUN micromamba install --name $ENV_NAME python=3.11 -y -c conda-forge && \
-    micromamba run --name $ENV_NAME pip install ipython jsonschema 
+    micromamba run --name $ENV_NAME pip install ipython jsonschema cyclopts requests
 
 RUN mkdir -p /docker_context
 
 COPY environment.yml /docker_context/environment.yml
 
-RUN micromamba install --name $ENV_NAME -y --file /docker_context/environment.yml
+RUN micromamba create --name variantiq -y --file /docker_context/environment.yml
 
 COPY ./varifier* /docker_context/
 RUN scif install /docker_context/varifier.scif 
 
 COPY ./vcfdist* /docker_context/
 RUN scif install /docker_context/vcfdist.scif 
+
+COPY ./simutator* /docker_context/
+RUN scif install /docker_context/simutator.scif 
+
+COPY ./sratools* /docker_context/
+RUN scif install /docker_context/sratools.scif 
+
 
 COPY src /src
 COPY ./variantiq* /docker_context/

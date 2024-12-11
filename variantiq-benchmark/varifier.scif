@@ -8,7 +8,7 @@
 
 %apprun varifier
 #we're running varifier within the  varifier environment here...
-CMD="micromamba run --name base varifier $@"
+CMD="micromamba run --name variantiq varifier $@"
 echo "Running . . . $CMD"
 $CMD
 

@@ -1,14 +1,25 @@
-name: base
+name: variantiq
 channels:
   - conda-forge
   - bioconda
 dependencies:
+  - python<3.9.0a0
   - pip
   - setuptools
   - sra-tools
   - varifier
   - vcfdist
+  - minimap2==2.17
+  - mummer4==4.0.0rc1
+  - biopython==1.77
+  - cluster_vcf_records==0.13.2
+  - mappy==2.17
+  - pandas==1.1.0
+  - pyfastaq==3.17.0
+  - pymummer==0.11.0
+  - bcftools==1.10.2
+  - pysam==0.16
+  - seaborn==0.10.1
   - pip:
-    - cyclopts
     - git+https://github.com/iqbal-lab-org/simutator
  

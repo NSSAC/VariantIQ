@@ -1,4 +1,5 @@
 {
-    "samples": "samples.csv"
-
+    "samples": "samples.csv",
+    "prerun_script": "download_minos_truth_data.sh",
+    "get_truth_genome_script": "copy_truth_genome.sh"
 }

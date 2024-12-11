@@ -1,0 +1,3 @@
+%apprun fastq-dump
+micromamba run --name variantiq fastq-dump $@
+
