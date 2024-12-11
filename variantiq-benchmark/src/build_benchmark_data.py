@@ -7,7 +7,7 @@ import json
 import subprocess
 import csv
 import requests
-
+import shutil
 
 FASTQDUMP=["scif","run","fastq-dump"]
 
@@ -91,6 +91,7 @@ def default_action(
 def call_prerun_script(script_file,output_directory,dataset_definition_folder,datasets_definitions):
     print("Pre-run data retrieval step")
     result = subprocess.run([f"{dataset_definition_folder}/{script_file}",output_directory], capture_output=True, text=True)
+    # print(f"Results: {result.stdout} {result.stderr}")
 
 def getReadsFromSRA(sraid,target_folder,data_def):
     """
@@ -185,9 +186,11 @@ def getTruthGenome(truth_genome,target_folder,row,data_def_folder,data_def,outpu
     print(f"Get Truth Genome: {truth_genome}")
     target_file = f"{target_folder}/truth_genome.fasta"
     if not os.path.exists(target_file): 
+        print(f"Get Truth Genome: {truth_genome}")
         if data_def.get("get_truth_genome_script",False):
             cmd=[f"{data_def_folder}/{data_def.get('get_truth_genome_script')}",output_root,truth_genome,target_folder]
             result = subprocess.run(cmd, capture_output=True, text=True)
+            # print(f"result: {result.stdout} {result.stderr}")
         else:
             if truth_genome.startswith("http://") or truth_genome.startswith("https://"):
                 download_url_to_file(truth_genome,target_file)
@@ -195,8 +198,10 @@ def getTruthGenome(truth_genome,target_folder,row,data_def_folder,data_def,outpu
                 raise NotImplemented(f"Copying files from local directory")
             else:
                 raise Exception(f"Uknown Truth Genome Reference: {truth_genome}")
-
+    else:
+        print("Found truth genome")
     return target_file
+
 def download_url_to_file(url: str, target_file: str) -> None:
     """
     Downloads the contents of the given URL and saves it to the specified file.
@@ -271,6 +276,7 @@ def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pi
         exit(1)
 
 def process_samples(sample_file,data_def_folder,pipeline_inputs_only,comparison_vcf_only,output_directory,data_def):
+    shutil.copyfile(sample_file,f"{output_directory}/benchmark_samples.csv")
     with open(sample_file, 'r') as f:       
         print(f"Reading Sample CSV: {sample_file}")
         csv_reader = csv.DictReader(f, delimiter=',')

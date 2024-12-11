@@ -13,7 +13,7 @@ ENV VERSION=${VERSION:-0.0.0}
 #     && apt-get clean --assume-yes
 
 # build mamba 'base' env
-RUN micromamba install --name $ENV_NAME python=3.11 -y -c conda-forge && \
+RUN micromamba install --name $ENV_NAME python=3.11 wget -y -c conda-forge && \
     micromamba run --name $ENV_NAME pip install ipython jsonschema cyclopts requests
 
 RUN mkdir -p /docker_context
