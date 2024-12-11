@@ -31,9 +31,12 @@ def default_action(
             # if running vcf tools
             #     run varifier make_truth_vcf truth_genome.vcf
             #     run vcftools
+            #
+            # copy results to keep to sample_folder
+            # remove intermediate files
 
-        # run report generator here
-
+        # run report generator 
+        
 def run_varifier(sample_folder):
     cmd = VARIFIER + ["vcf_eval",f"{sample_folder}/truth_genome.fasta",f"{sample_folder}/reference_genome.fasta",f"{sample_folder}/*.vcf",f"${sample_folder}/_varifier"]
     result = subprocess.run(cmd,capture_output=True, text=True)
