@@ -42,7 +42,16 @@ def run_benchmark_pipelines(
         print(f"Reading Sample CSV: {sample_file}")
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
+            # run the pipelines
             run_pipelines(f"{data_directory}/{row['sample_name']}")
+
+            # cleanup the sample folder for any shared artifacts
+            try:
+                shutil.rmtree(f"{data_directory}/{row['sample_name']}/_shared") 
+            except FileNotFoundError:
+                pass
+            except Exception as err:
+                print(f"Error cleaning sample folder: {err}")
 
 
 def get_pipelines():
@@ -60,5 +69,6 @@ def run_pipelines(sample_folder):
         print(f"Pipeline Command: {cmd}")
         result = subprocess.run(cmd,cwd=__dirname__,capture_output=True, text=True)
         print(f"Results for {pipeline} {sample_folder}:\n{result.stdout}\n{result.stderr}")
+
 
 benchmark()

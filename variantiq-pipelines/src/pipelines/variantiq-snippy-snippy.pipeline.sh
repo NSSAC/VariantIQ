@@ -9,6 +9,7 @@ READ1=${SAMPLE_FOLDER}/read_1.fastq
 READ2=${SAMPLE_FOLDER}/read_2.fastq
 TRUTH_GENOME=READ1=${SAMPLE_FOLDER}/truth_genome.fasta
 BUILD_FOLDER=${SAMPLE_FOLDER}/_${PIPELINE_NAME}
+PATH=$PATH:./pipelines:./pipelines/aligners
 
 if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
 
@@ -18,9 +19,6 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
 
     #clean build folder
     rm -rf $BUILD_FOLDER
-
-    #cleanup indexes on the reference genome, but not the genome itself
-    rm $SAMPLE_FOLDER/reference_genome.fasta.*
 else
     echo "Skipping ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf.  Already exists."
 fi
