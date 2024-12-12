@@ -7,9 +7,3 @@ CMD="micromamba run --name freebayes freebayes $@"
 echo "Running . . . $CMD"
 $CMD
 
-%apprun freebayes_sciduct
-mkdir -p $SCIF_APPDATA
-#extract params from /job/job.json
-#NAME="$(jq -r .input.name /job/job.json)"
-#scif run freebayes -- ....params...
-

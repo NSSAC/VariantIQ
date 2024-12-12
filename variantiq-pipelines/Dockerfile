@@ -39,18 +39,10 @@ ENV MAMBA_ROOT_PREFIX="/opt/conda"
 RUN micromamba install --name $ENV_NAME python=3.11 -y -c conda-forge && \
     micromamba run --name $ENV_NAME pip install ipython jsonschema 
 
-COPY ./varifier* /docker_context/
-RUN scif install /docker_context/varifier.scif
-COPY ./simutator* /docker_context/
-RUN scif install /docker_context/simutator.scif    
-COPY ./vcfdist* /docker_context/
-RUN scif install /docker_context/vcfdist.scif       
 COPY ./snippy* /docker_context/
 RUN scif install /docker_context/snippy.scif   
 COPY ./freebayes* /docker_context/
 RUN scif install /docker_context/freebayes.scif 
-COPY ./sratools* /docker_context/
-RUN scif install /docker_context/sratools.scif 
 COPY ./bwa* /docker_context/
 RUN scif install /docker_context/bwa.scif 
 COPY ./picard* /docker_context/
@@ -75,7 +67,7 @@ RUN scif install /docker_context/gramtools.scif
 COPY src /src
 COPY ./variantiq* /docker_context/
 RUN scif install /docker_context/variantiq.scif 
-RUN rm -rf /src
+# RUN rm -rf /src
 
 COPY config.json /docker_context/
 RUN --mount=type=secret,id=gh_token \

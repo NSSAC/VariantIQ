@@ -15,4 +15,3 @@ ln -s /src/build_benchmark_data.py $SCIF_APPBIN_build_benchmark_data/build_bench
 CMD="micromamba run --name base build_benchmark_data --output_directory /output $@"
 echo "Running . . . $CMD"
 $CMD
-
