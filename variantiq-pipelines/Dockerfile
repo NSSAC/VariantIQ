@@ -67,7 +67,6 @@ RUN scif install /docker_context/gramtools.scif
 COPY src /src
 COPY ./variantiq* /docker_context/
 RUN scif install /docker_context/variantiq.scif 
-# RUN rm -rf /src
 
 COPY config.json /docker_context/
 RUN --mount=type=secret,id=gh_token \

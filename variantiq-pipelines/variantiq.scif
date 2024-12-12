@@ -1,6 +1,10 @@
 %appinstall variantiq
 micromamba create --yes --file /docker_context/variantiq_env.yml
 
+%appinstall pipeline
+ln -s /src/pipelines $SCIF_APPBIN_pipeline/pipelines
+ln -s /src/run_pipelines.py $SCIF_APPBIN_pipeline/run_pipelines
 
 %apprun pipeline
-micromamba run --name variantiq /src/run_pipelines.py $@
+micromamba run --name variantiq run_pipelines $@
+

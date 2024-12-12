@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+echo "VariantIQ Snippy Pipeline"
+PIPELINE_NAME="variantiq-snippy"
+SAMPLE_FOLDER=$1
+REFERENCE_GENOME=${SAMPLE_FOLDER}/reference_genome.fasta
+READ1=${SAMPLE_FOLDER}/read_1.fastq
+READ2=${SAMPLE_FOLDER}/read_2.fastq
+TRUTH_GENOME=READ1=${SAMPLE_FOLDER}/truth_genome.fasta
+BUILD_FOLDER=${SAMPLE_FOLDER}/_${PIPELINE_NAME}
+
+scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --R1 $READ1 --R2 $READ2 --unmapped --report --force
+
+scif run bcftools norm -f ${BUILD_FOLDER}/snps.vcf -o ${BUILD_FOLDER}_bcf_normalized_variants.vcf
+
+cp ${BUILD_FOLDER}_bcf_normalized_variants.vcf ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
+
+rm -rf $BUILD_FOLDER

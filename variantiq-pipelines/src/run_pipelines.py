@@ -57,7 +57,7 @@ def run_pipelines(sample_folder):
     
     for pipeline in get_pipelines():
         cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder]
-        print(f"Command: {cmd} {__dirname__}")
+        print(f"Pipeline Command: {cmd}")
         result = subprocess.run(cmd,cwd=__dirname__,capture_output=True, text=True)
         print(f"Results for {pipeline} {sample_folder}:\n{result.stdout}\n{result.stderr}")
 
