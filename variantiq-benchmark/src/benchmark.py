@@ -44,22 +44,24 @@ def default_action(
                 except FileExistsError:
                     pass
                 
-                # don't need this, varifier is running vt normalize
                 run_normalize(sample_folder,vcf,build_dir)
                 run_varifier(sample_folder,f"{build_dir}/normalized.vcf",build_dir)
-            
+                
+                # if running vcfdist
+                #     run varifier make_truth_vcf truth_genome.fasta
+                #     run vcfdist
+                #
 
-            # if running vcfdist
-            #     run varifier make_truth_vcf truth_genome.fasta
-            #     run vcfdist
-            #
-            # copy results to keep to sample_folder
+                # run sample level report generator
 
-            # remove intermediate files
+                # copy results to keep to sample_folder
 
-        # run report generator 
+                # remove intermediate files
 
-
+        # run full generator 
+        # cp to final location
+        # remove base_build_dir
+        
 
 def run_normalize(sample_folder,vcf, build_folder):
     print(f"Normalize {sample_folder}")
