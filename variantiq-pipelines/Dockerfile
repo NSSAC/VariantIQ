@@ -13,6 +13,7 @@ RUN apt-get update && \
     jq \
     tree \
     musl-dev \
+    libssl-dev \
     && apt-get clean --assume-yes
 
 # Don't fail on first-time host key check for any %appinstall

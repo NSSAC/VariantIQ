@@ -1,16 +1,11 @@
 # FROM ghcr.io/nssac/mambascif as mamba_scif_install
+FROM ghcr.io/iqbal-lab-org/minos AS minos
 FROM ghcr.io/nssac/mambascif
 
 ARG VERSION
 ENV VERSION=${VERSION:-0.0.0}
 
-# RUN apt-get update && \
-#     apt-get install --assume-yes \
-#     curl \
-#     git \
-#     jq \
-#     tree \
-#     && apt-get clean --assume-yes
+RUN apt-get install --assume-yes libssl-dev
 
 # build mamba 'base' env
 RUN micromamba install --name $ENV_NAME python=3.11 wget -y -c conda-forge && \
@@ -34,6 +29,11 @@ RUN scif install /docker_context/simutator.scif
 COPY ./sratools* /docker_context/
 RUN scif install /docker_context/sratools.scif 
 
+#copy binary and specific libcrypto from minos
+#and remove the one with varifier in bioconda
+COPY --from=minos /bioinf-tools/vt-git/vt /usr/bin/vt
+COPY --from=minos /lib/x86_64-linux-gnu/libcrypto.so.1.1 /lib/x86_64-linux-gnu/libcrypto.so.1.1
+RUN rm $MAMBA_ROOT_PREFIX/envs/variantiq/bin/vt 
 
 COPY src /src
 COPY ./variantiq* /docker_context/
@@ -51,6 +51,7 @@ COPY benchmark_dataset_definitions /benchmark_dataset_definitions
 RUN rm -rf /run/secrets || true
 
 RUN rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost $AGENT_TOOLSDIRECTORY /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 ENTRYPOINT ["scif","--quiet"]
 

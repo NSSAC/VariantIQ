@@ -1,11 +1,3 @@
-#%appinstall varifier
-#micromamba create --yes --file /docker_context/varifier_env.yml
-
-#the vt that gets installed doesnt' seem to work completly.  It may be missing some formats/compressions
-#this links to the vt that ships with clockwork image.
-#rm $MAMBA_ROOT_PREFIX/envs/varifier/bin/vt 
-#ln -s /bioinf-tools/vt $MAMBA_ROOT_PREFIX/envs/varifier/bin/vt
-
 %apprun varifier
 #we're running varifier within the  varifier environment here...
 CMD="micromamba run --name variantiq varifier $@"
