@@ -5,6 +5,7 @@ FROM ghcr.io/nssac/mambascif
 ARG VERSION
 ENV VERSION=${VERSION:-0.0.0}
 
+RUN apt-get update
 RUN apt-get install --assume-yes libssl-dev
 
 # build mamba 'base' env

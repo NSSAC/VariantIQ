@@ -157,7 +157,8 @@ def getReferenceGenome(reference_genome,target_folder,row,data_def_folder,data_d
     if not os.path.exists(target_file): 
         print(f"Get Reference Genome: {reference_genome}")
         if data_def.get("get_reference_genome_script",False):
-            raise NotImplemented("Run Script to get reference_genome")
+            cmd=[f"{data_def_folder}/{data_def.get('get_reference_genome_script')}",output_root,reference_genome,target_folder]
+            result = subprocess.run(cmd, capture_output=True, text=True)
         else:
             if reference_genome.startswith("http://") or reference_genome.startswith("https://"):
                 download_url_to_file(reference_genome,target_file)
