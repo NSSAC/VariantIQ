@@ -61,12 +61,10 @@ def default_action(
         # run full generator 
         # cp to final location
         # remove base_build_dir
-        
+
 
 def run_normalize(sample_folder,vcf, build_folder):
     print(f"Normalize {sample_folder}")
-    # scif run bcftools norm -f $REF_GENOME_FILE ${OUTPUT}/${SRAID}_variants_bcftools.vcf -o ${OUTPUT}/${SRAID}_bcf_normalized_variants_bcftools.vcf
-
     cmd = BCFTOOLS + ["norm","-f",f"{sample_folder}/reference_genome.fasta",vcf,"-o",f"{build_folder}/normalized.vcf"]                     
     result = subprocess.run(cmd,capture_output=True, text=True)
     print(f"normalize Output: {result.stdout} {result.stderr}")
