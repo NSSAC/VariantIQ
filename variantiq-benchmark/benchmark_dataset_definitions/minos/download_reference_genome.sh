@@ -1,4 +1,4 @@
-#!/bin/env sh
+#!/bin/env bash
 
 OUTPUT_FOLDER=$1
 ID=$2

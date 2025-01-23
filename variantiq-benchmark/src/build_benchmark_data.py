@@ -91,7 +91,7 @@ def default_action(
 def call_prerun_script(script_file,output_directory,dataset_definition_folder,datasets_definitions):
     print("Pre-run data retrieval step")
     result = subprocess.run([f"{dataset_definition_folder}/{script_file}",output_directory], capture_output=True, text=True)
-    # print(f"Results: {result.stdout} {result.stderr}")
+    print(f"Results: \n{result.stdout}\n{result.stderr}")
 
 def getReadsFromSRA(sraid,target_folder,data_def):
     """
@@ -156,9 +156,12 @@ def getReferenceGenome(reference_genome,target_folder,row,data_def_folder,data_d
     target_file = f"{target_folder}/reference_genome.fasta"
     if not os.path.exists(target_file): 
         print(f"Get Reference Genome: {reference_genome}")
+        print(f"Data Def Folder: {data_def_folder}")
         if data_def.get("get_reference_genome_script",False):
             cmd=[f"{data_def_folder}/{data_def.get('get_reference_genome_script')}",output_root,reference_genome,target_folder]
             result = subprocess.run(cmd, capture_output=True, text=True)
+            print(f"Results: \n{result.stdout}\n{result.stderr}")
+
         else:
             if reference_genome.startswith("http://") or reference_genome.startswith("https://"):
                 download_url_to_file(reference_genome,target_file)
@@ -184,7 +187,6 @@ def getTruthGenome(truth_genome,target_folder,row,data_def_folder,data_def,outpu
         data_def (dict): The dataset definition
         output_root (str): The root output folder for the data build
     """
-    print(f"Get Truth Genome: {truth_genome}")
     target_file = f"{target_folder}/truth_genome.fasta"
     if not os.path.exists(target_file): 
         print(f"Get Truth Genome: {truth_genome}")
@@ -264,8 +266,8 @@ def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pi
         metadata = {"name": name}
         if not comparison_vcf_only:
             metadata['read_files'] = getReadFiles(read_files,sample_folder,row,data_def_folder,data_def,output_directory)
-            print(f"Downloaded Read FIles: {metadata['read_files']}")
-            metadata['reference_genome'] = getReferenceGenome(reference_genome,sample_folder,data_def_folder,row,data_def,output_directory)
+            print(f"Downloaded Read Files: {metadata['read_files']}")
+            metadata['reference_genome'] = getReferenceGenome(reference_genome,sample_folder,row,data_def_folder,data_def,output_directory)
             print(f"Downloaded Reference Genome: {metadata['reference_genome']}")
             metadata['truth_genome'] = getTruthGenome(truth_genome,sample_folder,row,data_def_folder,data_def,output_directory)
 
