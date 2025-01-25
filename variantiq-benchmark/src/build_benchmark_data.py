@@ -8,7 +8,9 @@ import subprocess
 import csv
 import requests
 import shutil
+import tarfile
 
+vcf_download_url="https://nssac.bii.virginia.edu/~dm8qs/variantiq_data"
 FASTQDUMP=["scif","run","fastq-dump"]
 
 build_benchmark_data=App()
@@ -82,11 +84,17 @@ def default_action(
     sample_file = data_def.get("samples","samples.csv")
     prerun_script = data_def.get("prerun_script", None)
 
-    if prerun_script is not None:
-        call_prerun_script(prerun_script,output_directory,f"{datasets_definitions}/{dataset}",datasets_definitions)
+    if not comparison_vcf_only:
+        if prerun_script is not None:
+            call_prerun_script(prerun_script,output_directory,f"{datasets_definitions}/{dataset}",datasets_definitions)
 
-    f = f"{datasets_definitions}/{dataset}/{sample_file}"
-    process_samples(f"{datasets_definitions}/{dataset}/{sample_file}",f"{datasets_definitions}/{dataset}",pipeline_inputs_only,comparison_vcf_only,output_directory,data_def)
+                
+        f = f"{datasets_definitions}/{dataset}/{sample_file}"
+        process_samples(f"{datasets_definitions}/{dataset}/{sample_file}",f"{datasets_definitions}/{dataset}",pipeline_inputs_only,comparison_vcf_only,output_directory,data_def)
+
+    if not pipeline_inputs_only:
+        get_comparison_vcfs(dataset,data_def,output_directory)
+
 
 def call_prerun_script(script_file,output_directory,dataset_definition_folder,datasets_definitions):
     print("Pre-run data retrieval step")
@@ -205,7 +213,7 @@ def getTruthGenome(truth_genome,target_folder,row,data_def_folder,data_def,outpu
         print("Found truth genome")
     return target_file
 
-def download_url_to_file(url: str, target_file: str) -> None:
+def download_url_to_file(url: str, target_file: str, silent:bool) -> None:
     """
     Downloads the contents of the given URL and saves it to the specified file.
 
@@ -228,7 +236,8 @@ def download_url_to_file(url: str, target_file: str) -> None:
             for chunk in response.iter_content(chunk_size=8192):
                 file.write(chunk)
 
-        print(f"Content downloaded successfully and saved to '{target_file}'")
+        if not silent:
+            print(f"Content downloaded successfully and saved to '{target_file}'")
 
     except requests.RequestException as e:
         print(f"HTTP request error: {e}")
@@ -236,6 +245,30 @@ def download_url_to_file(url: str, target_file: str) -> None:
     except IOError as e:
         print(f"File write error: {e}")
         raise
+
+def get_comparison_vcfs(dataset,data_def,output_directory):
+    try:
+        url = f"{vcf_download_url}/variantiq-data.json"
+        # Send an HTTP GET request
+        response = requests.get(url, {"accept": "application/json"})
+        response.raise_for_status()  # Raise an error for HTTP response codes 4xx/5xx
+        vcf_config = response.json()
+        for key in vcf_config[dataset]:
+            print(f"Downloading: {vcf_config[dataset][key]}")
+            target_file = f"{output_directory}/{vcf_config[dataset][key]}"
+            if not os.path.exists(target_file) and not os.path.exists(f"{target_file}.expanded"):
+                download_url_to_file(f"{vcf_download_url}/{vcf_config[dataset][key]}",target_file,True)
+                print(f"Extracting VCFs.")
+                with tarfile.open(target_file,"r") as tar:
+                    tar.extractall(path=output_directory)
+                    with open(f"{target_file}.expanded","w") as fp:
+                        pass
+                    print(f"Removing {target_file}.")
+                    os.remove(target_file)
+            
+    except Exception as err:
+        print(f"Error retrieving vcf config file from {url}")
+        exit(1)
 
 def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def):
     """
