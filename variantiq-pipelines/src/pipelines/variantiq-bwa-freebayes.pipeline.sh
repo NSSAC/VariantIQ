@@ -37,13 +37,12 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
         exit 1
     fi
 
-    # bcf variants
-    echo "BCF Variant calling"
-    scif run bcftools mpileup -f ${REFERENCE_GENOME} ${ALIGNER_FOLDER}/aligned_reads.bam -o ${BUILD_FOLDER}/dedup.mpileup.vcf 
-    scif run bcftools call --ploidy 1 -mv -Ov -o ${BUILD_FOLDER}/variants_bcftools.vcf ${BUILD_FOLDER}/dedup.mpileup.vcf
+    # freebayes variants
+    echo "Freebayes Variant calling"
+	scif run freebayes -f ${REFERENCE_GENOME} --ploidy 1 ${ALIGNER_FOLDER}/aligned_reads.bam -v ${BUILD_FOLDER}/variants_freebayes.vcf
  
     #copy final vcf back to sample folder
-    mv ${BUILD_FOLDER}/variants_bcftools.vcf  ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
+    mv ${BUILD_FOLDER}/variants_freebayes.vcf  ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
 
     #cleanup build folder
     rm -rf ${BUILD_FOLDER}
