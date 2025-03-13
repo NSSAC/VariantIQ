@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+
 import os
 import json
 import sys
@@ -276,7 +278,7 @@ def main(base_dir, output_dir):
     with open(html_path, "w") as html_file:
         html_file.write(html_content)
 
-    print(f"Reports generated in: {output_dir}")
+    # print(f"Reports generated in: {output_dir}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

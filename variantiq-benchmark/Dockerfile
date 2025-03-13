@@ -9,7 +9,7 @@ RUN apt-get install --assume-yes libssl-dev
 
 # build mamba 'base' env
 RUN micromamba install --name $ENV_NAME python=3.11 wget -y -c conda-forge && \
-    micromamba run --name $ENV_NAME pip install ipython jsonschema cyclopts requests
+    micromamba run --name $ENV_NAME pip install ipython jsonschema cyclopts requests jinja2 pandas matplotlib seaborn
 
 RUN mkdir -p /docker_context
 
