@@ -4,6 +4,7 @@ set -e
 
 PIPELINE_NAME="variantiq-bwa-freebayes"
 SAMPLE_FOLDER=$1
+DEBUG=$2
 REFERENCE_GENOME=${SAMPLE_FOLDER}/reference_genome.fasta
 READ1=${SAMPLE_FOLDER}/read_1.fastq
 READ2=${SAMPLE_FOLDER}/read_2.fastq
@@ -45,7 +46,9 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
     mv ${BUILD_FOLDER}/variants_freebayes.vcf  ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
 
     #cleanup build folder
-    rm -rf ${BUILD_FOLDER}
+    if [ -z "$DEBUG"]; then
+        rm -rf $BUILD_FOLDER
+    fi
 else
     echo "Skipping ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf.  Already exists."
 fi

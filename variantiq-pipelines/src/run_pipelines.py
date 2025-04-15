@@ -31,7 +31,8 @@ def list():
 def run_benchmark_pipelines(
     data_directory: str = "/output",
     sample_file: str = "/output/benchmark_samples.csv",
-    ignore_vcfs: list = []
+    ignore_vcfs: list = [],
+    debug: bool = False
 ):
     """
     Run benchmark pipelines over a benchmarking dataset
@@ -43,7 +44,7 @@ def run_benchmark_pipelines(
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
             # run the pipelines
-            run_pipelines(f"{data_directory}/{row['sample_name']}")
+            run_pipelines(f"{data_directory}/{row['sample_name']}", debug=debug)
 
             # cleanup the sample folder for any shared artifacts
             try:
@@ -61,11 +62,13 @@ def get_pipelines():
 
     return pipelines
 
-def run_pipelines(sample_folder):
+def run_pipelines(sample_folder,debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
         cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder]
+        if debug:
+            cmd.append("debug")
         print(f"Pipeline Command: {cmd}")
         result = subprocess.run(cmd,cwd=__dirname__,capture_output=True, text=True)
         print(f"Results for {pipeline} {sample_folder}:\n{result.stdout}\n{result.stderr}")
