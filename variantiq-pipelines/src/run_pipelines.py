@@ -47,12 +47,13 @@ def run_benchmark_pipelines(
             run_pipelines(f"{data_directory}/{row['sample_name']}", debug=debug)
 
             # cleanup the sample folder for any shared artifacts
-            try:
-                shutil.rmtree(f"{data_directory}/{row['sample_name']}/_shared") 
-            except FileNotFoundError:
-                pass
-            except Exception as err:
-                print(f"Error cleaning sample folder: {err}")
+            if not debug:
+                try:
+                    shutil.rmtree(f"{data_directory}/{row['sample_name']}/_shared") 
+                except FileNotFoundError:
+                    pass
+                except Exception as err:
+                    print(f"Error cleaning sample folder: {err}")
 
 
 def get_pipelines():
