@@ -17,7 +17,7 @@ build_benchmark_data=App()
 
 @build_benchmark_data.default
 def default_action(
-    dataset: Literal["minos","variantiq-synthetic","generate-synthetic"] = "minos",
+    dataset: Literal["minos","minos-single","variantiq-synthetic","generate-synthetic"] = "minos",
     platform: Literal["pacbio"] = "pacbio",
     pipeline_inputs_only: bool = False,
     comparison_vcf_only: bool = False,
@@ -87,10 +87,9 @@ def default_action(
     if not comparison_vcf_only:
         if prerun_script is not None:
             call_prerun_script(prerun_script,output_directory,f"{datasets_definitions}/{dataset}",datasets_definitions)
-
                 
         f = f"{datasets_definitions}/{dataset}/{sample_file}"
-        process_samples(f"{datasets_definitions}/{dataset}/{sample_file}",f"{datasets_definitions}/{dataset}",pipeline_inputs_only,comparison_vcf_only,output_directory,data_def)
+        process_samples(f"{datasets_definitions}/{dataset}/{sample_file}",f"{datasets_definitions}/{dataset}",pipeline_inputs_only,comparison_vcf_only,output_directory,data_def,dataset)
 
     if not pipeline_inputs_only:
         get_comparison_vcfs(dataset,data_def,output_directory)
@@ -101,7 +100,7 @@ def call_prerun_script(script_file,output_directory,dataset_definition_folder,da
     result = subprocess.run([f"{dataset_definition_folder}/{script_file}",output_directory], capture_output=True, text=True)
     print(f"Results: \n{result.stdout}\n{result.stderr}")
 
-def getReadsFromSRA(sraid,target_folder,data_def):
+def getReadsFromSRA(sraid,target_folder,data_def,dataset):
     """
     Checks if a truth genome has already been downloaded in the target folder, and if not
     retrieves it.
@@ -112,18 +111,36 @@ def getReadsFromSRA(sraid,target_folder,data_def):
         data_def (dict): The dataset definition
     """
     try:
-        cmd = FASTQDUMP + ["--split-files","-O",target_folder, sraid]
-        result = subprocess.run(cmd,capture_output=True, text=True)
-        os.rename(f"{target_folder}/{sraid}_1.fastq",f"{target_folder}/read_1.fastq")
-        os.rename(f"{target_folder}/{sraid}_2.fastq",f"{target_folder}/read_2.fastq")
+        if dataset == "minos-single":
+            cmd = FASTQDUMP + ["-O", target_folder, sraid]
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
 
+            single_read_file = f"{target_folder}/{sraid}.fastq"
+            if os.path.exists(single_read_file):
+                os.rename(single_read_file, f"{target_folder}/read_1.fastq")
+                return [f"{target_folder}/read_1.fastq"]
+            else:
+                raise FileNotFoundError(f"Expected single read file not found: {single_read_file}")
+
+        else:
+            cmd = FASTQDUMP + ["--split-files", "-O", target_folder, sraid]
+            subprocess.run(cmd, check=True, capture_output=True, text=True)
+
+            read1 = f"{target_folder}/{sraid}_1.fastq"
+            read2 = f"{target_folder}/{sraid}_2.fastq"
+
+            if os.path.exists(read1) and os.path.exists(read2):
+                os.rename(read1, f"{target_folder}/read_1.fastq")
+                os.rename(read2, f"{target_folder}/read_2.fastq")
+                return [f"{target_folder}/read_1.fastq", f"{target_folder}/read_2.fastq"]
+            else:
+                raise FileNotFoundError("Expected paired read files not found.")
+                
     except Exception as err:
         print(f"Error running fastq-dump: {err}")
         exit(1)
 
-    return [f"read_1.fastq",f"read_2.fastq"]
-
-def getReadFiles(read_files:Union[str,list],target_folder,row, data_def_folder,data_def,output_root):
+def getReadFiles(read_files:Union[str,list],target_folder,row, data_def_folder,data_def,output_root,dataset):
     """
     Checks if a read_files has already been downloaded in the target folder, and if not
     retrieves it.
@@ -146,7 +163,7 @@ def getReadFiles(read_files:Union[str,list],target_folder,row, data_def_folder,d
             elif read_files.startswith("/"):
                 raise NotImplemented(f"Copying files from local directory")
             else:
-                return getReadsFromSRA(read_files,target_folder,data_def)
+                return getReadsFromSRA(read_files,target_folder,data_def,dataset)
 
 def getReferenceGenome(reference_genome,target_folder,row,data_def_folder,data_def,output_root):
     """
@@ -270,7 +287,7 @@ def get_comparison_vcfs(dataset,data_def,output_directory):
         print(f"Error retrieving vcf config file from {url}")
         exit(1)
 
-def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def):
+def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def,dataset):
     """
     Create the sample folder in the output directory
 
@@ -298,7 +315,7 @@ def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pi
     try:
         metadata = {"name": name}
         if not comparison_vcf_only:
-            metadata['read_files'] = getReadFiles(read_files,sample_folder,row,data_def_folder,data_def,output_directory)
+            metadata['read_files'] = getReadFiles(read_files,sample_folder,row,data_def_folder,data_def,output_directory,dataset)
             print(f"Downloaded Read Files: {metadata['read_files']}")
             metadata['reference_genome'] = getReferenceGenome(reference_genome,sample_folder,row,data_def_folder,data_def,output_directory)
             print(f"Downloaded Reference Genome: {metadata['reference_genome']}")
@@ -311,14 +328,13 @@ def populate_sample_folder(name,read_files,reference_genome,truth_genome,row, pi
         print(f"Error populating sample folder: {err}")
         exit(1)
 
-def process_samples(sample_file,data_def_folder,pipeline_inputs_only,comparison_vcf_only,output_directory,data_def):
+def process_samples(sample_file,data_def_folder,pipeline_inputs_only,comparison_vcf_only,output_directory,data_def,dataset):
     shutil.copyfile(sample_file,f"{output_directory}/benchmark_samples.csv")
     with open(sample_file, 'r') as f:       
         print(f"Reading Sample CSV: {sample_file}")
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
-            populate_sample_folder(row["sample_name"],row['read_files'],row['reference_genome'],row['truth_genome'],row,pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def)
-
+            populate_sample_folder(row["sample_name"],row['read_files'],row['reference_genome'],row['truth_genome'],row,pipeline_inputs_only,comparison_vcf_only,output_directory,data_def_folder,data_def,dataset)
 
 
 build_benchmark_data()

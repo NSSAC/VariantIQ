@@ -1,0 +1,7 @@
+{
+    "samples": "samples.csv",
+    "test_samples": "test_samples.csv",
+    "prerun_script": "pre_run.sh",
+    "get_truth_genome_script": "copy_truth_genome.sh",
+    "get_reference_genome_script": "download_reference_genome.sh"
+}
