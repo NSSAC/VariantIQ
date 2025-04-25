@@ -32,6 +32,7 @@ def run_benchmark_pipelines(
     data_directory: str = "/output",
     sample_file: str = "/output/benchmark_samples.csv",
     ignore_vcfs: list = [],
+    single_end: bool = False,
     debug: bool = False
 ):
     """
@@ -44,7 +45,7 @@ def run_benchmark_pipelines(
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
             # run the pipelines
-            run_pipelines(f"{data_directory}/{row['sample_name']}", debug=debug)
+            run_pipelines(f"{data_directory}/{row['sample_name']}", single_end=single_end, debug=debug)
 
             # cleanup the sample folder for any shared artifacts
             if not debug:
@@ -55,24 +56,26 @@ def run_benchmark_pipelines(
                 except Exception as err:
                     print(f"Error cleaning sample folder: {err}")
 
-
-def get_pipelines():
+def get_pipelines(single_end):
     pipelines=[]
     for file in glob.glob(f"{__dirname__}/pipelines/*.pipeline.sh"):
         pipelines.append(os.path.basename(file).split(".",1)[0])
 
     return pipelines
+    
 
-def run_pipelines(sample_folder,debug=False):
+def run_pipelines(sample_folder,single_end=False, debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
         cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder]
+        if single_end:
+            cmd.append("single_end")
+                    
         if debug:
             cmd.append("debug")
         print(f"Pipeline Command: {cmd}")
         result = subprocess.run(cmd,cwd=__dirname__,capture_output=True, text=True)
         print(f"Results for {pipeline} {sample_folder}:\n{result.stdout}\n{result.stderr}")
-
 
 benchmark()
