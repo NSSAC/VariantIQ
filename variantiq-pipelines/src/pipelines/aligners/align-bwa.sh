@@ -42,7 +42,7 @@ if [ ! -f "${BUILD_FOLDER}/aligned_reads.bam" ]; then
     scif run picard MarkDuplicates I=${BUILD_FOLDER}/bwa-mem_aligned_reads.sorted.bam O=${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam M=${BUILD_FOLDER}/metrics.txt
     scif run snippy-samtools index ${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam
     mv ${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam ${BUILD_FOLDER}/aligned_reads.bam
-    [ -f "${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam.bai" ] && mv ${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam ${BUILD_FOLDER}/aligned_reads.bam
+    [ -f "${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam.bai" ] && mv ${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam.bai ${BUILD_FOLDER}/aligned_reads.bam.bai
 else
     echo "Skipping ${INSTANCE_NAME} Aligner"
 fi
