@@ -45,7 +45,7 @@ def run_benchmark_pipelines(
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
             # run the pipelines
-            run_pipelines_se(f"{data_directory}/{row['sample_name']}", single_end=single_end, debug=debug)
+            run_pipelines(f"{data_directory}/{row['sample_name']}", single_end=single_end, debug=debug)
 
             # cleanup the sample folder for any shared artifacts
             if not debug:
