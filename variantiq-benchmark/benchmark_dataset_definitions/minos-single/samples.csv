@@ -1,4 +1,4 @@
-﻿sample_name,read_files,reference_genome,truth_genome
+sample_name,read_files,reference_genome,truth_genome
 N0004_ERR964408,ERR964408,NC_000962.3,mtb.N0004.fasta
 N0004_ERR964415,ERR964415,NC_000962.3,mtb.N0004.fasta
 N0031_ERR956960,ERR956960,NC_000962.3,mtb.N0031.fasta
