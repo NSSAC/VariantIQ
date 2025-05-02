@@ -56,7 +56,7 @@ def run_benchmark_pipelines(
                 except Exception as err:
                     print(f"Error cleaning sample folder: {err}")
 
-def get_pipelines(single_end):
+def get_pipelines():
     pipelines=[]
     for file in glob.glob(f"{__dirname__}/pipelines/*.pipeline.sh"):
         pipelines.append(os.path.basename(file).split(".",1)[0])
