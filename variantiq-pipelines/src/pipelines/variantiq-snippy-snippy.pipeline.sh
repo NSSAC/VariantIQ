@@ -14,12 +14,14 @@ BUILD_FOLDER=${SAMPLE_FOLDER}/_${PIPELINE_NAME}
 PATH=$PATH:./pipelines:./pipelines/aligners
 
 if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
-    if [ "$SINGLE_END" == "true" ]; then
-        scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --se $READ1 --unmapped --report --force
+    if [ -z "$SINGLE_END" ]; then
+        echo "Executing command: scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --R1 $READ1 --R2 $READ2 --unmapped --report --force"
+        scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --R1 $READ1 --R2 $READ2 --unmapped --report --force || { echo "Error: Snippy failed"; exit 1; }
     else
-        scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --R1 $READ1 --R2 $READ2 --unmapped --report --force
+        echo "Executing command: scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --se $READ1 --unmapped --report --force"
+        scif run snippy --outdir $BUILD_FOLDER --ref $REFERENCE_GENOME --se $READ1 --unmapped --report --force || { echo "Error: Snippy failed"; exit 1; }
     fi
-    
+
     mv ${BUILD_FOLDER}/snps.vcf  ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
 
     #clean build folder

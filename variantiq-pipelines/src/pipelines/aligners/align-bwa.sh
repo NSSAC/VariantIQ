@@ -30,13 +30,15 @@ if [ ! -f "${BUILD_FOLDER}/aligned_reads.bam" ]; then
 
     #align
     scif run bwa index ${REFERENCE_GENOME}
-    
-    if [[ "$SINGLE_END" == "true" || "$SINGLE_END" == "1" ]]; then
-        scif run bwa mem ${REFERENCE_GENOME} ${READ1} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam || { echo "Error: BWA mem failed"; exit 1; }
-    else
+
+    if [ -z "$SINGLE_END" ]; then
+        echo "Executing command: scif run bwa mem ${REFERENCE_GENOME} ${READ1} ${READ2} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam"
         scif run bwa mem ${REFERENCE_GENOME} ${READ1} ${READ2} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam || { echo "Error: BWA mem failed"; exit 1; }
+    else
+        echo "Executing command: scif run bwa mem ${REFERENCE_GENOME} ${READ1} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam"
+        scif run bwa mem ${REFERENCE_GENOME} ${READ1} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam || { echo "Error: BWA mem failed"; exit 1; }
     fi
-    
+
     scif run snippy-samtools view -S -b ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.bam
     scif run snippy-samtools sort ${BUILD_FOLDER}/bwa-mem_aligned_reads.bam -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sorted.bam
     scif run picard MarkDuplicates I=${BUILD_FOLDER}/bwa-mem_aligned_reads.sorted.bam O=${BUILD_FOLDER}/dedup_bwa-mem_aligned_reads.sorted.bam M=${BUILD_FOLDER}/metrics.txt
