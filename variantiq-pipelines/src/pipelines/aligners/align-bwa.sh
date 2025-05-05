@@ -4,7 +4,6 @@ set -e
 echo "Align BWA"
 SAMPLE_FOLDER=$1
 INSTANCE_NAME=$2
-SINGLE_END=$3
 REFERENCE_GENOME=${SAMPLE_FOLDER}/reference_genome.fasta
 READ1=${SAMPLE_FOLDER}/read_1.fastq
 READ2=${SAMPLE_FOLDER}/read_2.fastq
@@ -31,7 +30,12 @@ if [ ! -f "${BUILD_FOLDER}/aligned_reads.bam" ]; then
     #align
     scif run bwa index ${REFERENCE_GENOME}
 
-    if [ -z "$SINGLE_END" ]; then
+    if [ ! -f "$READ1" ] && [ ! -f "$READ2" ]; then
+        echo "Error: No valid input reads found! READ1 ($READ1) and READ2 ($READ2) do not exist." >&2
+        exit 1
+    fi
+
+    if [ -f "$READ1" ] && [ -f "$READ2" ]; then
         echo "Executing command: scif run bwa mem ${REFERENCE_GENOME} ${READ1} ${READ2} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam"
         scif run bwa mem ${REFERENCE_GENOME} ${READ1} ${READ2} -o ${BUILD_FOLDER}/bwa-mem_aligned_reads.sam || { echo "Error: BWA mem failed"; exit 1; }
     else

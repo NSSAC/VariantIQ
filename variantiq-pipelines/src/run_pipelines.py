@@ -1,6 +1,5 @@
 #!/usr/bin/env python 
 
-#!/usr/bin/env python 
 from cyclopts import App
 from typing import Literal,Union
 import os
@@ -32,7 +31,6 @@ def run_benchmark_pipelines(
     data_directory: str = "/output",
     sample_file: str = "/output/benchmark_samples.csv",
     ignore_vcfs: list = [],
-    single_end: bool = False,
     debug: bool = False
 ):
     """
@@ -45,7 +43,7 @@ def run_benchmark_pipelines(
         csv_reader = csv.DictReader(f, delimiter=',')
         for row in csv_reader:
             # run the pipelines
-            run_pipelines(f"{data_directory}/{row['sample_name']}", single_end=single_end, debug=debug)
+            run_pipelines(f"{data_directory}/{row['sample_name']}", debug=debug)
 
             # cleanup the sample folder for any shared artifacts
             if not debug:
@@ -64,14 +62,12 @@ def get_pipelines():
     return pipelines
     
 
-def run_pipelines(sample_folder,single_end=False, debug=False):
+def run_pipelines(sample_folder, debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
         cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder]
-        if single_end:
-            cmd.append("single_end")
-                    
+                            
         if debug:
             cmd.append("debug")
         print(f"Pipeline Command: {cmd}")
