@@ -3,7 +3,8 @@ set -e
 
 PIPELINE_NAME="variantiq-bwa-bcftools"
 SAMPLE_FOLDER=$1
-DEBUG=$2
+NTHREAD=$2
+DEBUG=$3
 REFERENCE_GENOME=${SAMPLE_FOLDER}/reference_genome.fasta
 READ1=${SAMPLE_FOLDER}/read_1.fastq
 READ2=${SAMPLE_FOLDER}/read_2.fastq
@@ -11,6 +12,11 @@ TRUTH_GENOME=${SAMPLE_FOLDER}/truth_genome.fasta
 BUILD_FOLDER=${SAMPLE_FOLDER}/_${PIPELINE_NAME}
 PATH=$PATH:./pipelines:./pipelines/aligners
 echo PWD $PWD
+
+if ! [[ "$NTHREAD" =~ ^[0-9]+$ ]]; then
+    echo "Warning: NTHREAD is not a valid integer. Setting default value to 4."
+    NTHREAD=4
+fi
 
 if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
     echo "Running ${PIPELINE_NAME} pipeline..."
@@ -44,7 +50,7 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
     # bcf variants
     echo "BCF Variant calling"
     scif run bcftools mpileup -f ${REFERENCE_GENOME} ${ALIGNER_FOLDER}/aligned_reads.bam -o ${BUILD_FOLDER}/dedup.mpileup.vcf 
-    scif run bcftools call --ploidy 1 -mv -Ov -o  ${BUILD_FOLDER}/variants_bcftools.vcf ${BUILD_FOLDER}/dedup.mpileup.vcf
+    scif run bcftools call --threads $NTHREAD --ploidy 1 -mv -Ov -o  ${BUILD_FOLDER}/variants_bcftools.vcf ${BUILD_FOLDER}/dedup.mpileup.vcf
     scif run bcftools norm -f ${REFERENCE_GENOME} ${BUILD_FOLDER}/variants_bcftools.vcf -o ${BUILD_FOLDER}/bcf_normalized_variants.vcf
 
     mv ${BUILD_FOLDER}/bcf_normalized_variants.vcf ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf

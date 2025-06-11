@@ -39,8 +39,8 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
 
     # freebayes variants
     echo "Freebayes Variant calling"
-	scif run freebayes -f ${REFERENCE_GENOME} --ploidy 1 ${ALIGNER_FOLDER}/aligned_reads.bam -v ${BUILD_FOLDER}/variants_freebayes.vcf
- 
+    scif run freebayes -f ${REFERENCE_GENOME} --ploidy 1 ${ALIGNER_FOLDER}/aligned_reads.bam -v ${BUILD_FOLDER}/variants_freebayes.vcf
+
     #copy final vcf back to sample folder
     mv ${BUILD_FOLDER}/variants_freebayes.vcf  ${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf
 

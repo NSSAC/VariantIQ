@@ -31,6 +31,7 @@ def run_benchmark_pipelines(
     data_directory: str = "/output",
     sample_file: str = "/output/benchmark_samples.csv",
     ignore_vcfs: list = [],
+    nthread: int = 4,
     debug: bool = False
 ):
     """
@@ -62,11 +63,11 @@ def get_pipelines():
     return pipelines
     
 
-def run_pipelines(sample_folder, debug=False):
+def run_pipelines(sample_folder, nthread, debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
-        cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder]
+        cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder, nthread]
                             
         if debug:
             cmd.append("debug")
