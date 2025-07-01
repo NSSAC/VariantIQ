@@ -13,11 +13,6 @@ BUILD_FOLDER=${SAMPLE_FOLDER}/_${PIPELINE_NAME}
 PATH=$PATH:./pipelines:./pipelines/aligners
 echo PWD $PWD
 
-if ! [[ "$NTHREAD" =~ ^[0-9]+$ ]]; then
-    echo "Warning: NTHREAD is not a valid integer. Setting default value to 4."
-    NTHREAD=4
-fi
-
 if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
     echo "Running ${PIPELINE_NAME} pipeline..."
     mkdir -p $BUILD_FOLDER

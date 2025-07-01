@@ -3,7 +3,8 @@ set -e
 
 PIPELINE_NAME="variantiq-bwa-freebayes"
 SAMPLE_FOLDER=$1
-DEBUG=$2
+NTHREAD=$2
+DEBUG=$3
 REFERENCE_GENOME=${SAMPLE_FOLDER}/reference_genome.fasta
 READ1=${SAMPLE_FOLDER}/read_1.fastq
 READ2=${SAMPLE_FOLDER}/read_2.fastq
