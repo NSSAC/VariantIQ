@@ -63,7 +63,7 @@ def get_pipelines():
     return pipelines
     
 
-def run_pipelines(sample_folder, nthread, debug=False):
+def run_pipelines(sample_folder, nthread=4, debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
