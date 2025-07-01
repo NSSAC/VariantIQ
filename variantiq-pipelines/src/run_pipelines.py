@@ -67,7 +67,7 @@ def run_pipelines(sample_folder, nthread=4, debug=False):
     print(f"Run Pipelines: {sample_folder}")
     
     for pipeline in get_pipelines():
-        cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder, nthread]
+        cmd = [f"pipelines/{pipeline}.pipeline.sh",sample_folder, str(nthread)]
                             
         if debug:
             cmd.append("debug")
