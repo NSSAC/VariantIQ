@@ -39,7 +39,7 @@ if [ ! -f "${SAMPLE_FOLDER}/${PIPELINE_NAME}.vcf" ]; then
     TRUTH_GENOME=${BUILD_FOLDER}/truth_genome.fasta   
 
     ALIGNER_INSTANCE=_shared/bwa_alignment
-    align-bwa.sh $SAMPLE_FOLDER $ALIGNER_INSTANCE
+    align-bwa.sh $SAMPLE_FOLDER $ALIGNER_INSTANCE $NTHREAD
     ALIGNER_FOLDER=${SAMPLE_FOLDER}/$ALIGNER_INSTANCE
 
     if [ ! -f "${ALIGNER_FOLDER}/aligned_reads.bam" ]; then
