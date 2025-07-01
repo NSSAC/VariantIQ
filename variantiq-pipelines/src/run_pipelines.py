@@ -30,7 +30,7 @@ def list():
 def run_benchmark_pipelines(
     data_directory: str = "/output",
     sample_file: str = "/output/benchmark_samples.csv",
-    ignore_vcfs: list = [],
+    # ignore_vcfs: list = [],
     nthread: int = 4,
     debug: bool = False
 ):
