@@ -11,6 +11,7 @@ import shutil
 import tarfile
 
 vcf_download_url="https://nssac.bii.virginia.edu/~dm8qs/variantiq_data"
+synthetic_data_download_url="https://nssac.bii.virginia.edu/~cm4su/variantiq_data"
 FASTQDUMP=["scif","run","fastq-dump"]
 
 build_benchmark_data=App()
@@ -56,6 +57,35 @@ def default_action(
         before re-downloading them 
     """
     print(f"Building Benchmark Data: {dataset}")
+    
+    # ----------------------------------------------------------------------
+    # SPECIAL CASE: variantiq_synthetic
+    # ----------------------------------------------------------------------
+    if dataset == "variantiq-synthetic":
+        print("Special dataset detected: variantiq-synthetic")
+
+        archive_name = "variantiq-synthetic.bz2"
+        download_url = f"{synthetic_data_download_url}/{archive_name}"
+        target_file = os.path.join(output_directory, archive_name)
+
+        # Download only if not already expanded
+        if not os.path.exists(target_file) and not os.path.exists(f"{target_file}.expanded"):
+            print(f"Downloading: {download_url}")
+            download_url_to_file(download_url, target_file, True)
+
+            print("Extracting dataset...")
+            with tarfile.open(target_file, "r:bz2") as tar:
+                tar.extractall(path=output_directory)
+
+            # Mark as expanded
+            with open(f"{target_file}.expanded", "w") as fp:
+                pass
+
+            print(f"Removing {target_file}")
+            os.remove(target_file)
+
+        print(f"Dataset ready in: {output_directory}")
+        return
 
     try:
         os.mkdir( output_directory, 0o755 )
