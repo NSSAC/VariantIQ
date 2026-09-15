@@ -2,6 +2,8 @@
 
 Evaluate variant callers against a known answer.
 
+VariantIQ is a container-based system that prepares isolate data, runs a standard set of callers, and scores each resulting VCF against a known truth genome. Two images share a directory of samples: one builds datasets and reports scores; the other encapsulates the callers and runs them the same way for every isolate.
+
 A **caller** takes sequencing **reads** and a species **reference** genome and writes a VCF: claimed differences between that isolate and the reference. VariantIQ grades each VCF against a **truth** genome (a high-quality assembly of the same isolate). Callers never see the truth.
 
 | Input | Role |
