@@ -117,5 +117,3 @@ Writes `/output/benchmark/` (`benchmark_results.csv`, plots, HTML).
 | `test/` | Manual `docker run` notes |
 
 ---
-
-The two images exist because the caller stack and the Varifier/Simutator stack do not install cleanly together.
